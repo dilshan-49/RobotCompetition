@@ -2,19 +2,19 @@
 #include <Wire.h>
 
 
-#define NUM_SENSORS   8     // number of sensors used
-#define D8 A0
-#define D7 A1
-#define D6 A2
-#define D5 A3
-#define D4 A4
-#define D3 A5
-#define D2 A6
-#define D1 A7
-#define MOTOR_RIGHT_FORWARD 23
-#define MOTOR_RIGHT_BACKWARD 22
-#define MOTOR_LEFT_FORWARD 24
-#define MOTOR_LEFT_BACKWARD 25
+#define NUM_SENSORS   8    // number of sensors used
+#define D1 A0
+#define D2 A1
+#define D3 A2
+#define D4 A3
+#define D5 A4
+#define D6 A5
+#define D7 A6
+#define D8 A7
+#define MOTOR_RIGHT_FORWARD 22
+#define MOTOR_RIGHT_BACKWARD 23
+#define MOTOR_LEFT_FORWARD 25
+#define MOTOR_LEFT_BACKWARD 24
 #define RIGHT_PWM 6
 #define LEFT_PWM 7
 #define buttonPin 19 // Define the pin for the button
@@ -22,11 +22,11 @@
 //function declarations
 void calibrate();
 void stopCalibrationISR();
-float calculateError();
-void controlMotors(int leftSpeed, int rightSpeed,bool forward);
+int calculateError();
+void controlMotors(int leftSpeed, int rightSpeed);
 
 // PID constants
-float Kp = 1.5;  // Proportional gain
+float Kp = 1.0;  // Proportional gain
 float Ki = 0.0;  // Integral gain
 float Kd = 0.5;  // Derivative gain
 
@@ -35,13 +35,13 @@ int max_sensor_values[NUM_SENSORS];
 int min_sensor_values[NUM_SENSORS];
 int sensor_values[NUM_SENSORS];
 int sensor_array[NUM_SENSORS]={D1,D2,D3,D4,D5,D6,D7,D8};
-float threshold[NUM_SENSORS];
-int weights[NUM_SENSORS] = {-20, -15, -10, -5, 5, 10, 15, 20};
+float threshold[NUM_SENSORS] = {750, 750, 750, 750, 750, 750, 750, 750};
+int weights[NUM_SENSORS] = {7,4,2,1,-1,-2,-4,-7};
 
 float error_sum=0;
 float error_dif=0;
 float lastError=0;
-int baseSpeed = 190;
+int baseSpeed = 90;
 volatile bool stopCalibration = false; // Flag to indicate if calibration should stop
 
 
@@ -64,16 +64,16 @@ void setup()
   pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
   pinMode(MOTOR_LEFT_BACKWARD, OUTPUT);
   delay(500);
-  attachInterrupt(digitalPinToInterrupt(buttonPin), stopCalibrationISR, FALLING); // Attach the interrupt to the button
-  calibrate();
-  detachInterrupt(digitalPinToInterrupt(buttonPin)); // Detach the interrupt to the button
+  //attachInterrupt(digitalPinToInterrupt(buttonPin), stopCalibrationISR, FALLING); // Attach the interrupt to the button
+  //calibrate();
+  //detachInterrupt(digitalPinToInterrupt(buttonPin)); // Detach the interrupt to the button
 }
 
 
 void loop()
 {
   // Calculate error
-  float error = calculateError();
+  int error = calculateError();
 
   // Calculate PID terms
   error_sum += error;
@@ -83,22 +83,29 @@ void loop()
   float correction = Kp * error + Ki * error_sum + Kd * error_dif;
 
   // Calculate motor speeds based on the correction
-  int leftSpeed = baseSpeed + correction;
-  int rightSpeed = baseSpeed - correction;
+  int leftSpeed = baseSpeed - correction;
+  int rightSpeed = baseSpeed + correction;
 
   // Constrain motor speeds to be within the range of 0-255
   leftSpeed = constrain(leftSpeed, 0, 255);
   rightSpeed = constrain(rightSpeed, 0, 255);
-
+  Serial.print("Error: ");
+  Serial.print(error);
+  Serial.print("Left Speed: ");
+  Serial.print(leftSpeed);
+  Serial.print(" Right Speed: ");
+  Serial.println(rightSpeed);
   // Set motor speeds
-  controlMotors(leftSpeed, rightSpeed, true);
+  controlMotors(leftSpeed, rightSpeed);
 
   // Store the last error for the next derivative calculation
   lastError = error;
 
-  delay(10);  // Short delay for stability
+  delay(50);  // Short delay for stability
+  Serial.println();
 }
 
+/*
 void calibrate()
 { for (int j = 0;j<NUM_SENSORS;j++)
     {
@@ -141,9 +148,11 @@ void stopCalibrationISR() {
   stopCalibration = true; // Set the flag to true when the button is pressed
 }
 
+*/
 
 // Function to calculate the error based on sensor readings and weights
-float calculateError() {
+
+int calculateError() {
   int sum = 0;
   int totalActivated = 0;
 
@@ -154,7 +163,6 @@ float calculateError() {
       totalActivated++;
     }
   }
-
   // If no sensors detect the line, return 0 error (robot is lost)
   if (totalActivated == 0) return 0;
 
@@ -163,7 +171,7 @@ float calculateError() {
 }
 
 // Function to control the motors based on calculated speeds
-void controlMotors(int leftSpeed, int rightSpeed,bool forward) {
+void controlMotors(int leftSpeed, int rightSpeed) {
   // Left motor control
   if (leftSpeed > 0) {
     digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
