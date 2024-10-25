@@ -115,16 +115,20 @@ void loop()
   switch (junctionTurn())
   {
     case 1:
-      /* code */
+      // T junction detected
+      //make the descision which direction to turn
       break;
     case 2:
-      /* code */
+      //left junction detected
+      turnLeft();
       break;
     case 3:
-      /* code */
+      //right junction detected
+      turnRight();
       break;
     case 4:
-      /* code */
+      //4 way junction detected
+      //make descision where to go
       break;
     default:
       break;
@@ -262,14 +266,32 @@ int junctionTurn(){
       rightcount++;
     }
   }
-  if(leftcount>3 and rightcount>3){
+  if(leftcount>2 and rightcount>2){
     //T junction detected
+    stopMotors();
+    //move little bit to check whether 4 way junction 
+    if(sensor_array[3]<threshold[3] and sensor_array[4]<threshold[4]){
+      return 4;//return 4 when there is 4 way junction
+    }else{
+      return 1;//return 1 when there is T junction
+    }
+    return 1;
   }
   else if(leftcount>3){
     //turn left
+    stopMotors();
+    return 2;
   }
   else if(rightcount>3){
     //turn right
+    stopMotors();
+    return 3;
   }
+
+}
+void turnLeft(){
+  
+}
+void turnRight(){
 
 }
