@@ -111,7 +111,24 @@ void loop()
   else{
     controlMotors(leftSpeed, rightSpeed);
   }
-
+  //check about the junction
+  switch (junctionTurn())
+  {
+    case 1:
+      /* code */
+      break;
+    case 2:
+      /* code */
+      break;
+    case 3:
+      /* code */
+      break;
+    case 4:
+      /* code */
+      break;
+    default:
+      break;
+  }
   // Store the last error for the next derivative calculation
   lastError = error;
 
@@ -229,4 +246,30 @@ void stopMotors(){
 
 void sharpTurn(bool direction){
   
+}
+int junctionTurn(){
+  int leftcount = 0;
+  int rightcount=0;
+  //check  whether left sensors detected the white line
+  for (int i = 0; i <= 4;i++){
+    if(sensor_array[i]<threshold[i]){
+      leftcount++;
+    }
+  }
+  //check whether right sensors detected the white line
+  for (int i = 3; i <= 7;i++){
+    if(sensor_array[i]<threshold[i]){
+      rightcount++;
+    }
+  }
+  if(leftcount>3 and rightcount>3){
+    //T junction detected
+  }
+  else if(leftcount>3){
+    //turn left
+  }
+  else if(rightcount>3){
+    //turn right
+  }
+
 }
