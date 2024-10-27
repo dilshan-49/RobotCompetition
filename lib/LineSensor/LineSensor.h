@@ -16,14 +16,13 @@
 #define DL A9
 
 extern int sensor_array[NUM_SENSORS];
-extern int threshold[NUM_SENSORS];
-extern int weights[NUM_SENSORS+2];
-int readings[NUM_SENSORS+2];
-
 extern int thresholdR;
 extern int thresholdL;
+extern int threshold[NUM_SENSORS];
+extern int readings[NUM_SENSORS+2];
+extern int weights[NUM_SENSORS+2] ;
 
-bool black = false;
+extern bool black;
 
 void calibrate();
 void readSensorVals();

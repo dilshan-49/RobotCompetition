@@ -29,7 +29,7 @@ int sensor_values[NUM_SENSORS];
 float error_sum=0;
 float error_dif=0;
 float lastError=0;
-int baseSpeed =100;
+int baseSpeed =70;
 volatile bool stopCalibration = false; // Flag to indicate if calibration should stop
 
 
@@ -83,7 +83,7 @@ void loop()
   Serial.print(leftSpeed);
   Serial.print(" Right Speed: ");
   Serial.println(rightSpeed);
-
+  // Set motor speeds
   if (black){
   stopMotors();
   }
@@ -91,6 +91,7 @@ void loop()
     controlMotors(leftSpeed, rightSpeed);
   }
 
+  // Store the last error for the next derivative calculation
   lastError = error;
 
   delay(20);
