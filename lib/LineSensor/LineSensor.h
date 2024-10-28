@@ -12,8 +12,8 @@
 #define D6 A5
 #define D7 A6
 #define D8 A7
-#define DR A8
-#define DL A9
+#define DR A14
+#define DL A15
 
 extern int sensor_array[NUM_SENSORS];
 extern int readings[NUM_SENSORS+2];
@@ -22,5 +22,6 @@ void calibrate();
 void readSensorVals();
 int getError();
 int detectJunc();
+bool areAllBlack(int* array, int size);
 
 #endif
