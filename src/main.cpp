@@ -12,7 +12,7 @@
 // PID constants
 
 //7,0,3
-float Kp = 9;  // Proportional gain
+float Kp = 7.5;  // Proportional gain
 float Ki = 0.1;  // Integral gain
 float Kd = 3;  // Derivative gain
 
@@ -29,7 +29,7 @@ int sensor_values[NUM_SENSORS];
 float error_sum=0;
 float error_dif=0;
 float lastError=0;
-int baseSpeed =100;
+
 volatile bool stopCalibration = false; // Flag to indicate if calibration should stop
 
 
@@ -48,6 +48,8 @@ void setup()
   pinMode(D6, INPUT);
   pinMode(D7, INPUT);
   pinMode(D8, INPUT);
+  pinMode(DR, INPUT);
+  pinMode(DL, INPUT);
   pinMode(MOTOR_RIGHT_FORWARD, OUTPUT);
   pinMode(MOTOR_RIGHT_BACKWARD, OUTPUT);
   pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
@@ -61,42 +63,25 @@ void setup()
 
 void loop()
 { // Calculate error
-  int error = getError();
-
-  // Calculate PID terms
-  error_sum += error;
-  error_dif = error - lastError;
-
-  // Calculate the control signal
-  int correction = Kp * error + Ki * error_sum + Kd * error_dif;
-
-  // Calculate motor speeds based on the correction
-  int leftSpeed = baseSpeed - correction;
-  int rightSpeed = baseSpeed + correction;
-
-  // Constrain motor speeds to be within the range of 0-255
-  leftSpeed = constrain(leftSpeed, -255, 255);
-  rightSpeed = constrain(rightSpeed, -255, 255);
-  Serial.print("Error: ");
-  Serial.print(error);
-  Serial.print("Left Speed: ");
-  Serial.print(leftSpeed);
-  Serial.print(" Right Speed: ");
-  Serial.println(rightSpeed);
-
-  if (black){
-  stopMotors();
+  switch (detectJunc())
+  {
+  case 1:
+    Serial.println("T Junction detected");
+    break;
+  case 2:
+    Serial.println("Right Turn detected");
+    break;
+  case 3:
+    Serial.println("Left Turn detected");;
+    break;
+  case 4:
+    Serial.println("Lost");
+    error_sum = 0;
+    error_dif = 0;
+    break;
+  default: // PID line following
+    Serial.println("Following Line");
+    break;
   }
-  else{
-    controlMotors(leftSpeed, rightSpeed);
-  }
-
-  lastError = error;
-
-  delay(20);
-  Serial.println();
+  delay(500);
 }
-
-
-
-

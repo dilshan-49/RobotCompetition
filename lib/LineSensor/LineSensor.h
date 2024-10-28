@@ -18,9 +18,6 @@
 extern int sensor_array[NUM_SENSORS];
 extern int readings[NUM_SENSORS+2];
 
-
-extern bool black;
-
 void calibrate();
 void readSensorVals();
 int getError();

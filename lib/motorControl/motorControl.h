@@ -9,6 +9,8 @@
 #define MOTOR_LEFT_BACKWARD 24
 #define RIGHT_PWM 6
 #define LEFT_PWM 7
+#define DR 26
+#define DL 27
 
 extern int baseSpeed;
 
