@@ -16,11 +16,8 @@
 #define DL A9
 
 extern int sensor_array[NUM_SENSORS];
-extern int thresholdR;
-extern int thresholdL;
-extern int threshold[NUM_SENSORS];
 extern int readings[NUM_SENSORS+2];
-extern int weights[NUM_SENSORS+2] ;
+
 
 extern bool black;
 

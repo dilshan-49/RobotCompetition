@@ -67,17 +67,17 @@ int getError() {
 
 int detectJunc(){
     //detect T junc
-    if(areAllOnes(readings, 10)){
+    if(areAllOnes(&readings[1], 8)){
         return 1;
     }
 
-    //detect left Turn
-    if(areAllOnes(readings, 5)){
+    //detect Right Turn
+    if(areAllOnes(&readings[1], 5)){
         return 2;
     }
 
-    //detect right Turn
-    if(areAllOnes(&readings[5], 5)){
+    //detect Left Turn
+    if(areAllOnes(&readings[4], 5)){
         return 3;
     }
     //no junction detected

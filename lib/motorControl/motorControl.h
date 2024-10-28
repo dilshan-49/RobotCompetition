@@ -10,11 +10,15 @@
 #define RIGHT_PWM 6
 #define LEFT_PWM 7
 
+extern int baseSpeed;
+
 void controlMotors(int leftSpeed, int rightSpeed);
 void stopMotors();
 void turnLeft(int speed);
 void turnRight(int speed);
 void turnBack(int speed);
 void rotate(bool direction);
+void moveForward(int speed);
+void brake();
 
 #endif 

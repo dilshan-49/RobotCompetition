@@ -1,5 +1,19 @@
 #include <motorControl.h>
+#define ENCODER_LEFT 19
+#define ENCODER_RIGHT 18
 
+int baseSpeed =70;
+
+volatile int encL;
+volatile int encR;
+
+void rightEncoder(){
+  encR++;
+}
+
+void leftEncoder(){
+  encL++;
+}
 
 void controlMotors(int leftSpeed, int rightSpeed) {
   // Left motor control
@@ -35,25 +49,47 @@ void stopMotors(){
   analogWrite(LEFT_PWM, 0);
   analogWrite(RIGHT_PWM, 0);
 }
+
+void brake(){
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+  analogWrite(LEFT_PWM, 100);
+  analogWrite(RIGHT_PWM, 100);
+}
+
 void turnLeft(int speed){
+  encR = 0;
+  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
   analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
-  delay(500);//just keep delay need to measure the time to take turn
-  stopMotors();
+  analogWrite(RIGHT_PWM, 0);
+
+  while(encR<260)  delay(5);
+  brake();
+  detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
+  encR = 0;
 }
 void turnRight(int speed){
-  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+  encL = 0;
+  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
+
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
-  analogWrite(LEFT_PWM, speed);
+  analogWrite(LEFT_PWM, 0);
   analogWrite(RIGHT_PWM, speed);
-  delay(500);//just keep delay need to measure the time to take turn
-  stopMotors();
+
+  while(encL<260)  delay(5);
+  brake();
+  detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
+  encL = 0;
 }
 void turnBack(int speed){
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
@@ -82,4 +118,13 @@ void rotate(bool direction){
     analogWrite(LEFT_PWM, 50);
     analogWrite(RIGHT_PWM, 50);
   }
+}
+
+void moveForward(int speed){
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+  analogWrite(LEFT_PWM, speed);
+  analogWrite(RIGHT_PWM, speed);
 }
