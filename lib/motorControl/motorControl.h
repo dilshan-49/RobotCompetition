@@ -19,7 +19,8 @@ void turnLeft(int rspeed,int lspeed);
 void turnRight(int lspeed,int rspeed);
 void turnBack(int speed);
 void moveForward(int speed);
+void moveBackward(int speed);
 void reverse(int speed);
 void brake();
-
-#endif 
+void rotate();
+#endif

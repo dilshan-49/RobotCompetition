@@ -17,8 +17,8 @@
 
 extern int sensor_array[NUM_SENSORS];
 extern int readings[NUM_SENSORS+2];
+extern int threshold[NUM_SENSORS];
 
-void calibrate();
 void readSensorVals();
 int getError();
 int detectJunc();
