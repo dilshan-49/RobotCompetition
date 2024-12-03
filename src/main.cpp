@@ -117,6 +117,7 @@ void loop()
     delay(300);
     stopMotors();
     break;
+    
   case 2: // Right turn
     digitalWrite(RightY, HIGH);
     Serial.println("Right Turn");
@@ -130,7 +131,6 @@ void loop()
       stopMotors();
       turnRight(85, 60);
     }
-    
     break;
 
   case 3: // Left turn
