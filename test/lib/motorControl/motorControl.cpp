@@ -2,7 +2,7 @@
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed =70;
+int baseSpeed =72;
 
 volatile int encL;
 volatile int encR;
@@ -62,15 +62,15 @@ void brake(){
 void turnLeft(int rspeed,int lspeed){
   encR = 0;
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
-  analogWrite(LEFT_PWM, lspeed);
-  analogWrite(RIGHT_PWM, rspeed);
+
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, LOW);
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+  analogWrite(LEFT_PWM, lspeed);
+  analogWrite(RIGHT_PWM, rspeed);
 
-
-  while(encR<235)  delay(5);
+  while(encR<250)  delay(1);
   brake();
   detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
   encR = 0;
@@ -78,15 +78,15 @@ void turnLeft(int rspeed,int lspeed){
 void turnRight(int lspeed,int rspeed){
   encL = 0;
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
-  analogWrite(LEFT_PWM, lspeed);
-  analogWrite(RIGHT_PWM, rspeed);
+
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+  analogWrite(LEFT_PWM, lspeed);
+  analogWrite(RIGHT_PWM, rspeed);
 
-
-  while(encL<235)  delay(5);
+  while(encL<250)  delay(1);
   brake();
   detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
   encL = 0;
@@ -112,14 +112,6 @@ void moveForward(int speed){
   analogWrite(RIGHT_PWM, speed);
 }
 
-void moveBackward(int speed){
-  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
-  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
-  analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
-}
 void reverse(int speed){
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
@@ -130,17 +122,8 @@ void reverse(int speed){
   readSensorVals();
   while(areAllBlack(&readings[2], 6)){
     readSensorVals();
-    delay(50);
+    delay(100);
   }
   brake();
 
-}
-
-void rotate(){
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
-  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
-  analogWrite(LEFT_PWM, 90);
-  analogWrite(RIGHT_PWM, 90);
 }
