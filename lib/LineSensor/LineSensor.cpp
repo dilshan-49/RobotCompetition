@@ -2,9 +2,9 @@
 #include <motorControl.h>
 
 int sensor_array[NUM_SENSORS] = {D1, D2, D3, D4, D5, D6, D7, D8};
-int threshold[NUM_SENSORS] = {900, 900, 900, 900, 900, 900, 900, 900};
+int threshold[NUM_SENSORS] = {200, 200, 200, 200, 200, 200, 200, 200};
 int weights[NUM_SENSORS] = {-7, -4, -2, -1, 1, 2, 4, 7};
-int readings[NUM_SENSORS + 2];
+int readings[NUM_SENSORS];
 int thresholdx = 170;
 bool black = false;
 
@@ -37,7 +37,7 @@ void readSensorVals()
     for (int i = 0; i <= 7; i++)
     {
         readings[i] = analogRead(sensor_array[i]) < threshold[i] ? 1 : 0;
-        Serial.print(readings[i]);
+        //    Serial.print(readings[i]);
     }
 }
 

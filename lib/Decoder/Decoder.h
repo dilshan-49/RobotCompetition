@@ -5,6 +5,6 @@
 #include <LineSensor.h>
 
 int startReading();
-int getNum(int *array, int size);
+int getNum(int size);
 
 #endif
