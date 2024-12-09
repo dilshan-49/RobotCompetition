@@ -1,12 +1,14 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 
-int sensor_array[NUM_SENSORS] = {D1, D2, D3, D4, D5, D6, D7, D8};
-int threshold[NUM_SENSORS] = {200, 200, 200, 200, 200, 200, 200, 200};
-int weights[NUM_SENSORS] = {-7, -4, -2, -1, 1, 2, 4, 7};
+int sensor_array[NUM_SENSORS] = {D1, D2, D3, D4, D5, D6, D7, D8, D9, D10};
+int threshold[NUM_SENSORS];
+int weights[NUM_SENSORS] = {-11, -7, -4, -2, -1, 1, 2, 4, 7, 11};
 int readings[NUM_SENSORS];
-int thresholdx = 170;
-bool black = false;
+bool lost = false;
+int blackThreshold[NUM_SENSORS];
+int whiteThreshold[NUM_SENSORS];
+bool white = true;
 
 bool areAllBlack(int *array, int size)
 {
@@ -34,10 +36,21 @@ bool areAllWhite(int *array, int size)
 
 void readSensorVals()
 {
-    for (int i = 0; i <= 7; i++)
+    if (white)
     {
-        readings[i] = analogRead(sensor_array[i]) < threshold[i] ? 1 : 0;
-        //    Serial.print(readings[i]);
+        for (int i = 0; i < NUM_SENSORS; i++)
+        {
+            readings[i] = analogRead(sensor_array[i]) < whiteThreshold[i] ? 1 : 0;
+            // Serial.print(readings[i]);
+        }
+    }
+    else
+    {
+        for (int i = 0; i < NUM_SENSORS; i++)
+        {
+            readings[i] = analogRead(sensor_array[i]) > blackThreshold[i] ? 1 : 0;
+            // Serial.print(readings[i]);
+        }
     }
 }
 
@@ -48,7 +61,7 @@ int getError()
     int totalActivated = 0;
 
     // Calculate weighted sum of sensor readings
-    for (int i = 1; i < NUM_SENSORS + 1; i++)
+    for (int i = 0; i < NUM_SENSORS; i++)
     {
         if (readings[i])
         { // Set a threshold to determine if a sensor detects the line
@@ -62,39 +75,87 @@ int getError()
     // If no sensors detect the line, return 0 error (robot is lost)
     if (totalActivated == 0)
     {
-        black = true;
+        lost = true;
         return 0;
     }
-    black = false;
+    lost = false;
     // Calculate and return the error
     return sum / totalActivated;
 }
 
 int detectJunc()
+{ /*
+     readSensorVals(white);
+     // detect T junc
+     if (areAllWhite(&readings[0], 8))
+     {
+         return 1;
+     }
+
+     // detect Right Turn
+     if (areAllWhite(&readings[0], 5))
+     {
+         return 2;
+     }
+
+     // detect Left Turn
+     if (areAllWhite(&readings[3], 5))
+     {
+         return 3;
+     }
+     // Lost the line
+     if (areAllBlack(&readings[0], 8))
+     {
+         return 4;
+     }
+     else*/
+    return 0;
+}
+
+void calibrateBlack()
 {
-    readSensorVals();
-    // detect T junc
-    if (areAllWhite(&readings[0], 8))
+    for (int j = 0; j < NUM_SENSORS; j++)
     {
-        return 1;
+        // getting sesnsor readings
+        int val = analogRead(sensor_array[j]) - 100;
+        blackThreshold[j] = val;
+    }
+    for (int x = 0; x < 300; x++)
+    {
+
+        for (int j = 0; j < NUM_SENSORS; j++)
+        {
+            // getting sesnsor readings
+            int val = analogRead(sensor_array[j]) - 100;
+            // set the max we found THIS time
+            if (blackThreshold[j] < val)
+                blackThreshold[j] = val;
+        }
+        delay(10);
+    }
+}
+
+void calibrateWhite()
+{
+    for (int j = 0; j < NUM_SENSORS; j++)
+    {
+        // getting sesnsor readings
+        int val = analogRead(sensor_array[j]) + 20;
+        whiteThreshold[j] = val;
     }
 
-    // detect Right Turn
-    if (areAllWhite(&readings[0], 5))
+    for (int x = 0; x < 100;)
     {
-        return 2;
-    }
 
-    // detect Left Turn
-    if (areAllWhite(&readings[3], 5))
-    {
-        return 3;
+        for (int j = 0; j < NUM_SENSORS; j++)
+        {
+            // getting sesnsor readings
+            int val = analogRead(sensor_array[j]) + 20;
+            // set the max we found THIS time
+            if (whiteThreshold[j] < val)
+                whiteThreshold[j] = val;
+        }
+        x++;
+        delay(10);
     }
-    // Lost the line
-    if (areAllBlack(&readings[0], 8))
-    {
-        return 4;
-    }
-    else
-        return 0;
 }

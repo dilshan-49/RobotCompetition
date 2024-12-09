@@ -10,8 +10,6 @@
 #define LeftG 39
 #define LostGY 41
 #define TjuncB 43
-/*
-int whiteThreshold[NUM_SENSORS];
 
 // function declarations
 
@@ -32,12 +30,19 @@ int sensor_values[NUM_SENSORS];
 float error_sum = 0;
 float error_dif = 0;
 float lastError = 0;
+volatile int encL = 0;
+volatile int encR = 0;
+
+void rightEncoder()
+{
+  encR++;
+}
+void leftEncoder()
+{
+  encL++;
+}
 
 volatile bool stopCalibration = false; // Flag to indicate if calibration should stop
-
-void calibrateBlack();
-void calibrateWhite();
-*/
 
 void setup()
 {
@@ -52,6 +57,8 @@ void setup()
   pinMode(D6, INPUT);
   pinMode(D7, INPUT);
   pinMode(D8, INPUT);
+  pinMode(D9, INPUT);
+  pinMode(D10, INPUT);
   pinMode(PidR, OUTPUT);
   pinMode(RightY, OUTPUT);
   pinMode(LeftG, OUTPUT);
@@ -61,15 +68,20 @@ void setup()
   pinMode(MOTOR_RIGHT_BACKWARD, OUTPUT);
   pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
   pinMode(MOTOR_LEFT_BACKWARD, OUTPUT);
+  // calibrateBlack();
+  // calibrateWhite();
+  // for (int i = 0; i < NUM_SENSORS; i++)
+  // {
+  //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
+  // }
+  attachInterrupt(digitalPinToInterrupt(18), leftEncoder, RISING);
+  attachInterrupt(digitalPinToInterrupt(19), rightEncoder, RISING);
 }
 
 void loop()
-{ // Calculate error
-
-  int n = startReading();
-
-  int num = getNum(n);
-
-  Serial.print("Number is ");
-  Serial.println(num);
+{
+  Serial.print(encR);
+  Serial.print(" - ");
+  Serial.println(encL);
+  delay(50);
 }
