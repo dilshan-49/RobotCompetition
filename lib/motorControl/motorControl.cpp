@@ -81,14 +81,30 @@ void turnLeft(int rspeed, int lspeed)
   analogWrite(RIGHT_PWM, rspeed);
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
-  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
 
   while (encR < 161 or encL < 161)
   {
     if (encR > 161)
       digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
     if (encL > 161)
+      digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+    delay(5);
+  }
+
+  brake();
+
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+
+  while (encR < 145 or encL < 145)
+  {
+    if (encR > 145)
+      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+    if (encL > 145)
       digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
     delay(5);
   }
@@ -96,30 +112,54 @@ void turnLeft(int rspeed, int lspeed)
   detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
   encR = 0;
 }
+
 void turnRight(int lspeed, int rspeed)
 {
 
   encL, encR = 0;
+
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+
   analogWrite(LEFT_PWM, lspeed);
   analogWrite(RIGHT_PWM, rspeed);
-  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
+
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
 
   while (encR < 161 or encL < 161)
   {
     if (encR > 161)
-      digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
     if (encL > 161)
       digitalWrite(MOTOR_LEFT_FORWARD, LOW);
     delay(5);
   }
+
   brake();
+
+  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+
+  encR, encL = 0;
+
+  while (encR < 145 or encL < 145)
+  {
+    if (encR > 145)
+      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+    if (encL > 145)
+      digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+    delay(5);
+  }
+
   detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
-  encL = 0;
+  encL, encR = 0;
 }
+
 void turnBack(int speed)
 {
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);

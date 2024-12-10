@@ -30,17 +30,6 @@ int sensor_values[NUM_SENSORS];
 float error_sum = 0;
 float error_dif = 0;
 float lastError = 0;
-volatile int encL = 0;
-volatile int encR = 0;
-
-void rightEncoder()
-{
-  encR++;
-}
-void leftEncoder()
-{
-  encL++;
-}
 
 volatile bool stopCalibration = false; // Flag to indicate if calibration should stop
 
@@ -68,20 +57,22 @@ void setup()
   pinMode(MOTOR_RIGHT_BACKWARD, OUTPUT);
   pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
   pinMode(MOTOR_LEFT_BACKWARD, OUTPUT);
+  pinMode(LEFT_PWM, OUTPUT);
+  pinMode(RIGHT_PWM, OUTPUT);
   // calibrateBlack();
   // calibrateWhite();
   // for (int i = 0; i < NUM_SENSORS; i++)
   // {
   //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
   // }
-  attachInterrupt(digitalPinToInterrupt(18), leftEncoder, RISING);
-  attachInterrupt(digitalPinToInterrupt(19), rightEncoder, RISING);
 }
 
 void loop()
 {
-  Serial.print(encR);
-  Serial.print(" - ");
-  Serial.println(encL);
-  delay(50);
+  analogWrite(LEFT_PWM, 100);
+  analogWrite(RIGHT_PWM, 100);
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
 }
