@@ -2,7 +2,7 @@
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed = 70;
+int baseSpeed = 60;
 
 volatile int encL;
 volatile int encR;
@@ -62,80 +62,71 @@ void stopMotors()
 
 void brake()
 {
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
   analogWrite(LEFT_PWM, 100);
   analogWrite(RIGHT_PWM, 100);
+  delay(10);
+  analogWrite(LEFT_PWM, 0);
+  analogWrite(RIGHT_PWM, 0);
 }
 
-void turnLeft(int rspeed, int lspeed)
+void turnLeft(int speed)
 {
 
-  encR, encL = 0;
+  encR = 0;
+  encL = 0;
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
 
-  analogWrite(LEFT_PWM, lspeed);
-  analogWrite(RIGHT_PWM, rspeed);
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+  moveForward(speed);
 
-  while (encR < 161 or encL < 161)
+  while (encR < 161 and encL < 161)
   {
-    if (encR > 161)
-      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-    if (encL > 161)
-      digitalWrite(MOTOR_LEFT_FORWARD, LOW);
     delay(5);
   }
 
   brake();
-
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, LOW);
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+  analogWrite(LEFT_PWM, speed);
+  analogWrite(RIGHT_PWM, speed);
 
-  while (encR < 145 or encL < 145)
+  encL = 0;
+  encR = 0;
+  while (encR < 40 and encL < 40)
   {
-    if (encR > 145)
-      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-    if (encL > 145)
-      digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
     delay(5);
   }
+
   brake();
   detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
+  detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
+  encL = 0;
   encR = 0;
 }
 
-void turnRight(int lspeed, int rspeed)
+void turnRight(int speed)
 {
 
-  encL, encR = 0;
+  encL = 0;
+  encR = 0;
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
 
-  analogWrite(LEFT_PWM, lspeed);
-  analogWrite(RIGHT_PWM, rspeed);
+  moveForward(speed);
 
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
-
-  while (encR < 161 or encL < 161)
+  while (encR < 161 and encL < 161)
   {
-    if (encR > 161)
-      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-    if (encL > 161)
-      digitalWrite(MOTOR_LEFT_FORWARD, LOW);
     delay(5);
+    Serial.print(encR);
+    Serial.print(" - ");
+    Serial.println(encL);
   }
 
   brake();
@@ -144,20 +135,24 @@ void turnRight(int lspeed, int rspeed)
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+  analogWrite(LEFT_PWM, speed);
+  analogWrite(RIGHT_PWM, speed);
 
-  encR, encL = 0;
+  encL = 0;
+  encR = 0;
 
-  while (encR < 145 or encL < 145)
+  while (encR < 40 or encL < 40)
   {
-    if (encR > 145)
-      digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-    if (encL > 145)
-      digitalWrite(MOTOR_LEFT_FORWARD, LOW);
     delay(5);
+    Serial.print(encR);
+    Serial.print(" - ");
+    Serial.println(encL);
   }
 
   detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
-  encL, encR = 0;
+  detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT)),
+  encL = 0;
+  encR = 0;
 }
 
 void turnBack(int speed)
@@ -174,6 +169,7 @@ void turnBack(int speed)
 
 void moveForward(int speed)
 {
+  
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
