@@ -32,6 +32,16 @@ float error_dif = 0;
 float lastError = 0;
 
 volatile bool stopCalibration = false; // Flag to indicate if calibration should stop
+volatile int enR;
+volatile int enL;
+
+void left(){
+  enL++;
+}
+
+void right(){
+  enR++;
+}
 
 void setup()
 {
@@ -65,14 +75,15 @@ void setup()
   // {
   //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
   // }
+  attachInterrupt(digitalPinToInterrupt(18),right,RISING);
+  attachInterrupt(digitalPinToInterrupt(19), left, RISING);
+  moveForward(100);
 }
 
 void loop()
 {
-  analogWrite(LEFT_PWM, 100);
-  analogWrite(RIGHT_PWM, 100);
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+  Serial.print(enR);
+  Serial.print(" - ");
+  Serial.println(enL);
+  delay(10);
 }

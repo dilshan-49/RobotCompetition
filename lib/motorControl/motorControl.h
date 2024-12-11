@@ -8,15 +8,15 @@
 #define MOTOR_RIGHT_BACKWARD 22
 #define MOTOR_LEFT_FORWARD 24
 #define MOTOR_LEFT_BACKWARD 25
-#define RIGHT_PWM 12
-#define LEFT_PWM 13
+#define RIGHT_PWM 6
+#define LEFT_PWM 7
 
 extern int baseSpeed;
 
 void controlMotors(int leftSpeed, int rightSpeed);
 void stopMotors();
-void turnLeft(int rspeed, int lspeed);
-void turnRight(int lspeed, int rspeed);
+void turnLeft(int speed);
+void turnRight(int speed);
 void turnBack(int speed);
 void moveForward(int speed);
 void moveBackward(int speed);
