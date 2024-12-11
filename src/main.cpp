@@ -3,7 +3,8 @@
 
 #include <LineSensor.h>
 #include <motorControl.h>
-#include <Decoder.h>
+//#include <Decoder.h>
+#include <BoxArranging.h>
 
 #define PidR 44
 #define RightY 45
@@ -80,6 +81,5 @@ void setup()
 
 void loop()
 {
-  turnRight(100);
-  delay(2000);
+  boxOrdering(0);
 }

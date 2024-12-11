@@ -1,8 +1,10 @@
 #include <motorControl.h>
+#include <LineSensor.h>
+
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed = 60;
+int baseSpeed = 100;
 
 volatile int encL;
 volatile int encR;
@@ -75,44 +77,34 @@ void brake()
 
 void turnLeft(int speed)
 {
-
   encR = 0;
   encL = 0;
+
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
 
-  moveForward(speed);
-
-  while (encR < 161 and encL < 161)
-  {
-    delay(5);
+  
+  while(encL<160 && encR<160){
+    moveForward(100);
   }
+  encL = 0;
+  encR = 0;
 
-  brake();
+  stopMotors();
+
+  while(encL<155 && encR<155){
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, LOW);
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
   analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
-
-  encL = 0;
-  encR = 0;
-  while (encR < 40 and encL < 40)
-  {
-    delay(5);
+  analogWrite(RIGHT_PWM, speed);    
   }
-
-  brake();
-  detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
-  detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
-  encL = 0;
-  encR = 0;
+  stopMotors();
 }
-
+// Turn Right
 void turnRight(int speed)
 {
-
   encL = 0;
   encR = 0;
 
@@ -140,13 +132,27 @@ void turnRight(int speed)
 
 void turnBack(int speed)
 {
+  encL = 0;
+  encR = 0;
+
+  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+
+  while(encL<160 && encR<160){
+    moveForward(100);
+  }
+  encL = 0;
+  encR = 0;
+
+while(encL<320 && encR<320){ 
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
-  delay(1000); // just keep delay need to measure the time to take turn
+}
+ 
   stopMotors();
 }
 
@@ -178,10 +184,10 @@ void reverse(int speed)
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
-  readSensorVals();
-  while (areAllBlack(&readings[2], 6))
+  readSensorVals(false);
+  while (areAllSame(false))
   {
-    readSensorVals();
+    readSensorVals(false);
     delay(50);
   }
   brake();

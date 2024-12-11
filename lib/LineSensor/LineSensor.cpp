@@ -5,58 +5,46 @@ int sensor_array[NUM_SENSORS] = {D1, D2, D3, D4, D5, D6, D7, D8, D9, D10};
 int threshold[NUM_SENSORS];
 int weights[NUM_SENSORS] = {-11, -7, -4, -2, -1, 1, 2, 4, 7, 11};
 int readings[NUM_SENSORS];
+int rawReadings[NUM_SENSORS];
 bool lost = false;
 int blackThreshold[NUM_SENSORS];
 int whiteThreshold[NUM_SENSORS];
 bool white = true;
 
-bool areAllBlack(int *array, int size)
+bool areAllSame(bool color)
 {
-    for (int i = 0; i < size; ++i)
-    {
-        if (array[i] == 1)
-        {
+    readSensorVals(color);
+    for (int i = 0; i < NUM_SENSORS; i++){
+        if (!readings[i])
             return false;
-        }
     }
     return true;
 }
 
-bool areAllWhite(int *array, int size)
-{
-    for (int i = 0; i < size; ++i)
-    {
-        if (array[i] == 0)
-        {
-            return false;
-        }
-    }
-    return true;
-}
 
-void readSensorVals()
-{
-    if (white)
+
+void readSensorVals(bool color)
+{   for (int i = 0; i < NUM_SENSORS; i++){
+        rawReadings[i] = analogRead(sensor_array[i]);
+        if (color)
+        {
+            readings[i] = rawReadings[i] < whiteThreshold[i] ? 1 : 0;
+            // Serial.print(readings[i]);
+        }
+        else
     {
         for (int i = 0; i < NUM_SENSORS; i++)
         {
-            readings[i] = analogRead(sensor_array[i]) < whiteThreshold[i] ? 1 : 0;
+            readings[i] = rawReadings[i] > blackThreshold[i] ? 1 : 0;
             // Serial.print(readings[i]);
         }
     }
-    else
-    {
-        for (int i = 0; i < NUM_SENSORS; i++)
-        {
-            readings[i] = analogRead(sensor_array[i]) > blackThreshold[i] ? 1 : 0;
-            // Serial.print(readings[i]);
-        }
-    }
+}
 }
 
 int getError()
 {
-    readSensorVals();
+    readSensorVals(white);
     int sum = 0;
     int totalActivated = 0;
 
