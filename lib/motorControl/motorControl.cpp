@@ -119,40 +119,23 @@ void turnRight(int speed)
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
 
-  moveForward(speed);
-
-  while (encR < 161 and encL < 161)
-  {
-    delay(5);
-    Serial.print(encR);
-    Serial.print(" - ");
-    Serial.println(encL);
+  while(encL<160 && encR<160){
+    moveForward(100);
   }
+  encL = 0;
+  encR = 0;
 
-  brake();
+  stopMotors();
 
+  while(encL<155 && encR<155){
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
-
-  encL = 0;
-  encR = 0;
-
-  while (encR < 40 or encL < 40)
-  {
-    delay(5);
-    Serial.print(encR);
-    Serial.print(" - ");
-    Serial.println(encL);
   }
-
-  detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
-  detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT)),
-  encL = 0;
-  encR = 0;
+  stopMotors();
 }
 
 void turnBack(int speed)
