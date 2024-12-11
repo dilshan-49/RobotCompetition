@@ -92,7 +92,7 @@ void blueAsending(){
 
 void gotoFirstBox(){
     if (junctionCount == 1){
-        turnLeft(85,60);
+        turnLeft(85);
         moveForward(baseSpeed);
         delay(1000);// have to decide the delay according to the distance
         stopMotors();
@@ -100,10 +100,10 @@ void gotoFirstBox(){
 }
 void gotoSecondBox(){
     if (junctionCount == 1){
-        turnRight(85,60);
+        turnRight(85);
         movetoJunction();
         junctionCount++;
-        turnLeft(85,65);
+        turnLeft(85);
         moveForward(baseSpeed);
         delay(1000); // have to decide the delay according to the distance
         stopMotors();
@@ -114,10 +114,10 @@ void gotoSecondBox(){
         stopMotors();
     }
     if (junctionCount == 3){
-        turnLeft(85,60);
+        turnLeft(85);
         movetoJunction();
         junctionCount--;
-        turnRight(85,60);
+        turnRight(85);
         moveForward(baseSpeed);
         delay(1000);// have to decide the delay according to the distance
         stopMotors();
@@ -125,21 +125,21 @@ void gotoSecondBox(){
 }
 void gotoThirdBox(){
     if (junctionCount == 1){
-        turnRight(85,60);
+        turnRight(85);
         movetoJunction();
         junctionCount++;
         movetoJunction();
         junctionCount++;
-        turnLeft(85,65);
+        turnLeft(85);
         moveForward(baseSpeed);
         delay(1000); // have to decide the delay according to the distance
         stopMotors();
     }
     if (junctionCount == 2){
-        turnRight(85,60);
+        turnRight(85);
         movetoJunction();
         junctionCount++;
-        turnLeft(85,65);
+        turnLeft(85);
         moveForward(baseSpeed);
         delay(1000);// have to decide the delay according to the distance
         stopMotors();
@@ -155,14 +155,14 @@ void carryBoxTo(int junctiontoTurn){
     movetoJunction();
     if (junctionCount < junctiontoTurn)
     {
-        turnLeft(85, 60);
+        turnLeft(85);
         movetoJunction();
         junctionCount++;
         nextMoveUp(junctiontoTurn);//
     }
     else if (junctionCount > junctiontoTurn)
     {
-        turnRight(85,60);
+        turnRight(85);
         movetoJunction();
         junctionCount--;
         nextMoveDown(junctiontoTurn);//
@@ -181,7 +181,7 @@ void nextMoveUp(int junctiontoTurn){
         movetoJunction();
         junctionCount++;
     }
-    turnRight(85, 60);
+    turnRight(85);
     //********** Move forward and place the boxes *************
     turnBack(baseSpeed);
     movetoJunction();
@@ -193,7 +193,7 @@ void nextMoveDown(int junctiontoTurn){
         movetoJunction();
         junctionCount--;
     }
-    turnLeft(85,60);
+    turnLeft(85);
     //********** Move forward and place the boxes *************
     turnBack(baseSpeed);
     movetoJunction();

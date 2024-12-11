@@ -75,15 +75,11 @@ void setup()
   // {
   //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
   // }
-  attachInterrupt(digitalPinToInterrupt(18),right,RISING);
-  attachInterrupt(digitalPinToInterrupt(19), left, RISING);
-  moveForward(100);
+
 }
 
 void loop()
 {
-  Serial.print(enR);
-  Serial.print(" - ");
-  Serial.println(enL);
-  delay(10);
+  turnRight(100);
+  delay(2000);
 }
