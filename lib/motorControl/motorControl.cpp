@@ -4,7 +4,12 @@
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed = 90;
+int baseSpeed = 70;
+static int error;
+static int lastError;
+static int errorSum;
+static int errorDif;
+static int correction;
 
 volatile int encL;
 volatile int encR;
@@ -17,6 +22,18 @@ void rightEncoder()
 void leftEncoder()
 {
   encL++;
+}
+
+void attachInterrupts()
+{
+  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
+  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+}
+
+void detachInterrupts()
+{
+  detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
+  detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
 }
 
 void controlMotors(int leftSpeed, int rightSpeed)
@@ -48,10 +65,25 @@ void controlMotors(int leftSpeed, int rightSpeed)
   }
 
   // Set motor speeds using PWM
+  leftSpeed = constrain(leftSpeed, 0, 255);
+  rightSpeed = constrain(rightSpeed, 0, 255);
   analogWrite(LEFT_PWM, leftSpeed);
   analogWrite(RIGHT_PWM, rightSpeed);
 }
-//working properly
+
+static void encoderPID()
+{
+  error = encL - encR;
+  errorSum += error;
+  errorDif = error - lastError;
+  lastError = error;
+  correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDif;
+  controlMotors(baseSpeed - correction, baseSpeed + correction);
+  Serial.print(error);
+  Serial.print(" - ");
+  Serial.println(correction);
+}
+
 void stopMotors()
 {
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
@@ -78,8 +110,7 @@ void brake()
 void turnLeft(int speed)
 {
 
-  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
-  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+  attachInterrupts();
 
   encL = 0;
   encR = 0;
@@ -91,23 +122,25 @@ void turnLeft(int speed)
 
    stopMotors();
 
-  while(encL<150 && encR<150){
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
-  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
-  analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);    
+  while (encL < 150 && encR < 150)
+  {
+    digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+    digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+    digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+    digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+    analogWrite(LEFT_PWM, speed);
+    analogWrite(RIGHT_PWM, speed);
   }
   stopMotors();
+  detachInterrupts();
 }
+
+// Turn Right
 // working properly
 void turnRight(int speed)
 {
 
-
-  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
-  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+  attachInterrupts();
 
   encL = 0;
   encR = 0;
@@ -118,6 +151,7 @@ void turnRight(int speed)
    encR = 0;
 
    stopMotors();
+
 
   while(encL<150 && encR<150){
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
@@ -126,8 +160,10 @@ void turnRight(int speed)
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
+
   }
   stopMotors();
+  detachInterrupts();
 }
 
 void turnBack(int speed)
@@ -135,31 +171,42 @@ void turnBack(int speed)
   encL = 0;
   encR = 0;
 
-  attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
-  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+  attachInterrupts();
 
-while(encL<300 && encR<300){ 
-  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
-  analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
-}
- 
+
+  while (encL < 160 && encR < 160)
+  {
+    moveForward(100);
+  }
   stopMotors();
+  
+  encL = 0;
+  encR = 0;
+
+  while (encL < 300 && encR < 300)
+  {
+    digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+    digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
+    digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+    digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+    analogWrite(LEFT_PWM, speed);
+    analogWrite(RIGHT_PWM, speed);
+  }
+
+
+  stopMotors();
+  detachInterrupts();
 }
 
 void moveForward(int speed)
 {
-  
+
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
-  
 }
 
 void moveBackward(int speed)

@@ -12,6 +12,8 @@
 #define LEFT_PWM 7
 
 extern int baseSpeed;
+extern volatile int encL;
+extern volatile int encR;
 
 void controlMotors(int leftSpeed, int rightSpeed);
 void stopMotors();
@@ -23,4 +25,7 @@ void moveBackward(int speed);
 void reverse(int speed);
 void brake();
 void rotate();
+void attachInterrupts();
+void detachInterrupts();
+
 #endif

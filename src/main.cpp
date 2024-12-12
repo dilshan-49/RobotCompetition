@@ -1,28 +1,22 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#include "BoxArranging.h"
 #include <LineSensor.h>
 #include <motorControl.h>
-//#include <Decoder.h>
+#include <Decoder.h>
 
-
-#define PidR 44
-#define RightY 45
-#define LeftG 29
-#define LostGY 41
-#define TjuncB 43
+#define Blue 33
+#define Green 31
+#define Red 29
 
 // function declarations
 
 // PID constants
 
 // 7,0,3
-float Kp = 5;    // Proportional gain
+float Kp = 5; // Proportional gain
 float Ki = 0; // Integral gain
-float Kd = 3;  // Derivative gain
-
-
+float Kd = 3; // Derivative gain
 
 // other variables
 int max_sensor_values[NUM_SENSORS];
@@ -39,11 +33,13 @@ volatile bool stopCalibration = false; // Flag to indicate if calibration should
 volatile int enR;
 volatile int enL;
 
-void left(){
+void left()
+{
   enL++;
 }
 
-void right(){
+void right()
+{
   enR++;
 }
 
@@ -62,11 +58,9 @@ void setup()
   pinMode(D8, INPUT);
   pinMode(D9, INPUT);
   pinMode(D10, INPUT);
-  pinMode(PidR, OUTPUT);
-  pinMode(RightY, OUTPUT);
-  pinMode(LeftG, OUTPUT);
-  pinMode(LostGY, OUTPUT);
-  pinMode(TjuncB, OUTPUT);
+  pinMode(Green, OUTPUT);
+  pinMode(Red, OUTPUT);
+  pinMode(Blue, OUTPUT);
   pinMode(MOTOR_RIGHT_FORWARD, OUTPUT);
   pinMode(MOTOR_RIGHT_BACKWARD, OUTPUT);
   pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
@@ -74,18 +68,17 @@ void setup()
   pinMode(LEFT_PWM, OUTPUT);
   pinMode(RIGHT_PWM, OUTPUT);
 
-  
   // calibrateBlack();
   // calibrateWhite();
   // for (int i = 0; i < NUM_SENSORS; i++)
   // {
   //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
   // }
-
 }
 
 void loop()
 {
+
   //controlMotors(100,100);
   // if(areAllSame(black)){
   //   Serial.println("Black");
@@ -100,4 +93,5 @@ void loop()
   // }
   
   boxOrdering(0);
+
 }
