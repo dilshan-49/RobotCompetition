@@ -4,12 +4,12 @@
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed = 90;
-int error;
-int lastError;
-int errorSum;
-int errorDif;
-int correction;
+int baseSpeed = 70;
+static int error;
+static int lastError;
+static int errorSum;
+static int errorDif;
+static int correction;
 
 volatile int encL;
 volatile int encR;
@@ -71,7 +71,7 @@ void controlMotors(int leftSpeed, int rightSpeed)
   analogWrite(RIGHT_PWM, rightSpeed);
 }
 
-void encoderPID()
+static void encoderPID()
 {
   error = encL - encR;
   errorSum += error;

@@ -2,14 +2,13 @@
 
 void encoderPID();
 
-int error;
-int lastError;
-int errorSum;
-int errorDif;
-int correction;
+static int error;
+static int lastError;
+static int errorSum;
+static int errorDiff;
 int array[15];
 
-int startReading()
+/*int startReading()
 {
     int x;
     int n = 0;
@@ -56,7 +55,7 @@ int startReading()
         Serial.print(".");
     }
 }
-
+*/
 int getNum(int size)
 {
     if (size < 4)
@@ -97,28 +96,69 @@ int getNum(int size)
     return sum % 5;
 }
 
-void decodeWithPID()
+int ReadingWithPID()
 {
+    int x;
+    int n = 0;
+    bool whiteStrip = false;
+    volatile int counter = 0;
     encL = 0;
     encR = 0;
     attachInterrupts();
     error = 0;
     lastError = 0;
     errorSum = 0;
-    errorDif = 0;
-    correction;
+    errorDiff = 0;
     while (true)
     {
+        encoderPID();
+        while (areAllSame(white)) // keep counting till the EOL
+        {
+            counter++;
+            whiteStrip = true;
+            Serial.print(counter);
+            Serial.println(" - White Strip");
+            x = 0;
+            delay(5);
+            readSensorVals(true);
+            encoderPID();
+        }
+        encoderPID();
+        if (whiteStrip) // at the end of white strip
+        {
+            if (areAllSame(black)) // check if black strip
+            {
+                whiteStrip = false;
+                array[n] = counter;
+                Serial.println(counter);
+                n++;
+                x = 0;
+                counter = 0;
+            }
+            else
+            {
+                x++;
+                encoderPID();
+                if (x > 8)
+                {
+                    array[n] = counter; // at the end of encoded strips
+                    Serial.println(array[n]);
+                    stopMotors();
+                    return n + 1;
+                }
+                delay(10);
+            }
+        }
     }
 }
 
-void encoderPID()
+static void encoderPID()
 {
     error = encL - encR;
     errorSum += error;
-    errorDif = error - lastError;
+    errorDiff = error - lastError;
     lastError = error;
-    correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDif;
+    int correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDiff;
     controlMotors(baseSpeed - correction, baseSpeed + correction);
     Serial.print(error);
     Serial.print(" - ");

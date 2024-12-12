@@ -78,10 +78,13 @@ void setup()
 
 void loop()
 {
-  digitalWrite(Blue, HIGH);
-  delay(1000);
-  digitalWrite(Red, HIGH);
-  delay(1000);
-  digitalWrite(Green, HIGH);
-  delay(1000);
+  int n = ReadingWithPID();
+  int x = getNum(n);
+  for (int i = 0; i < x; i++)
+  {
+    digitalWrite(Blue, HIGH);
+    delay(1000);
+    digitalWrite(Red, LOW);
+    delay(1000);
+  }
 }

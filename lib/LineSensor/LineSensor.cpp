@@ -30,7 +30,7 @@ void readSensorVals(bool color) // white=true & black=false
         rawReadings[i] = analogRead(sensor_array[i]);
         if (color)
         {
-            readings[i] = rawReadings[i] < whiteThreshold[i] ? 0 : 1;
+            readings[i] = rawReadings[i] < whiteThreshold[i] ? 1 : 0;
         }
         else
         {
