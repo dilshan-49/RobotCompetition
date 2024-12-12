@@ -25,7 +25,7 @@ void stopMotors();
 void turnLeft();
 void turnRight();
 void turnBack(bool side); // true for right, false for left
-void moveForward(int speed);
+void moveForward();
 void moveBackward(int speed);
 void reverse(int speed);
 void brake();

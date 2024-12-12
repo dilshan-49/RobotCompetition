@@ -3,6 +3,7 @@
 #include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
+#include <RoboArm.h>
 // #include <Decoder.h>
 
 #define Blue 33
@@ -91,13 +92,12 @@ void loop()
   // {
   //   turnBack(90);
   // }
-  
-  boxOrdering(0);
+  initializeArm();
+  delay(2000);
+  grabBox();
   while(true){
 
   }
-
-  turnRight();
-  delay(1000);
-  turnLeft();
+  initializeArm();
+  delay()
 }
