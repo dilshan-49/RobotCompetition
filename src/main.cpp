@@ -3,7 +3,7 @@
 #include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
-#include <Decoder.h>
+// #include <Decoder.h>
 
 #define Blue 33
 #define Green 31
@@ -97,4 +97,7 @@ void loop()
 
   }
 
+  turnRight();
+  delay(1000);
+  turnLeft();
 }

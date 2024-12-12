@@ -23,9 +23,9 @@ int sensor_values[NUM_SENSORS];
 
 // int weights[NUM_SENSORS] = {7,4,2,1,-1,-2,-4,-7};
 
-float error_sum = 0;
-float error_dif = 0;
-float lastError = 0;
+static float error_sum = 0;
+static float error_dif = 0;
+static float lastError = 0;
 
 
 

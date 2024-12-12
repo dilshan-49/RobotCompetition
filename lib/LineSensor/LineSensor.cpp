@@ -16,7 +16,6 @@ const bool black = false;
 // black==1
 // white=0
 
-
 bool areAllSame(bool color)
 {
     readSensorVals(color);
@@ -61,8 +60,8 @@ int getError()
             sum += weights[i];
             totalActivated++;
         }
-        //Serial.print(readings[i]);
-        //Serial.print(" - ");
+        //    Serial.print(readings[i]);
+        //    Serial.print(" - ");
     }
     // If no sensors detect the line, return 0 error (robot is lost)
     if (totalActivated == 0)

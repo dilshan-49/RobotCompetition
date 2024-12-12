@@ -4,14 +4,16 @@
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed = 70;
-int turnSpeed = 70;
-
+int baseSpeed = 80;
 static int error;
 static int lastError;
 static int errorSum;
 static int errorDif;
 static int correction;
+
+float KpEn = 0.5;
+float KiEn = 0;
+float KdEn = 0.02;
 
 volatile int encL;
 volatile int encR;
@@ -73,14 +75,34 @@ void controlMotors(int leftSpeed, int rightSpeed)
   analogWrite(RIGHT_PWM, rightSpeed);
 }
 
-static void encoderPID()
+static void encoderPID(int caseNum)
 {
   error = encL - encR;
   errorSum += error;
   errorDif = error - lastError;
   lastError = error;
-  correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDif;
-  controlMotors(baseSpeed - correction, baseSpeed + correction);
+  correction = KpEn * error + KiEn * errorSum + KdEn * errorDif;
+  int leftspeed;
+  int rightspeed;
+  switch (caseNum)
+  {
+  case 0:
+    leftspeed = baseSpeed - correction;
+    rightspeed = baseSpeed + correction;
+    break;
+
+  case 1:
+    leftspeed = baseSpeed - correction;
+    rightspeed = -(baseSpeed + correction);
+    break;
+
+  default:
+    leftspeed = -(baseSpeed - correction);
+    rightspeed = baseSpeed + correction;
+    break;
+  }
+
+  controlMotors(leftspeed, rightspeed);
   Serial.print(error);
   Serial.print(" - ");
   Serial.println(correction);
@@ -95,7 +117,7 @@ void stopMotors()
   analogWrite(LEFT_PWM, 0);
   analogWrite(RIGHT_PWM, 0);
 }
-//working properly
+// working properly
 void brake()
 {
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
@@ -108,30 +130,26 @@ void brake()
   analogWrite(LEFT_PWM, 0);
   analogWrite(RIGHT_PWM, 0);
 }
-//working properly
-void turnLeft(int speed)
+// working properly
+void turnLeft()
 {
 
   attachInterrupts();
 
   encL = 0;
   encR = 0;
-   while(encL<140 && encR<140){
-     moveForward(turnSpeed);
-   }
-   encL = 0;
-   encR = 0;
+  while (encL < 130 && encR < 130)
+  {
+    encoderPID(0);
+  }
+  encL = 0;
+  encR = 0;
 
-   stopMotors();
+  stopMotors();
 
   while (encL < 150 && encR < 150)
   {
-    digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-    digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-    digitalWrite(MOTOR_LEFT_FORWARD, LOW);
-    digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
-    analogWrite(LEFT_PWM, speed);
-    analogWrite(RIGHT_PWM, speed);
+    encoderPID(2);
   }
   stopMotors();
   detachInterrupts();
@@ -139,66 +157,61 @@ void turnLeft(int speed)
 
 // Turn Right
 // working properly
-void turnRight(int speed)
+void turnRight()
 {
 
   attachInterrupts();
 
   encL = 0;
   encR = 0;
-   while(encL<140 && encR<140){
-     moveForward(turnSpeed);
-   }
-   encL = 0;
-   encR = 0;
+  while (encL < 130 && encR < 130)
+  {
+    encoderPID(0);
+  }
+  encL = 0;
+  encR = 0;
 
-   stopMotors();
+  stopMotors();
 
-
-  while(encL<150 && encR<150){
-  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
-  analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
-
+  while (encL < 150 && encR < 150)
+  {
+    encoderPID(1);
   }
   stopMotors();
   detachInterrupts();
 }
 
-void turnBack(int speed)
+void turnBack(bool side)
 {
   encL = 0;
   encR = 0;
 
   attachInterrupts();
+
+  while (encL < 160 && encR < 160)
+  {
+    encoderPID(0);
+  }
+  stopMotors();
+
+  encL = 0;
+  encR = 0;
 
   while (encL < 300 && encR < 300)
   {
-    digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-    digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
-    digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-    digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
-    analogWrite(LEFT_PWM, speed);
-    analogWrite(RIGHT_PWM, speed);
+    if (side)
+      encoderPID(1); // turn from right
+    else
+      encoderPID(2); // turn from left
   }
-
 
   stopMotors();
   detachInterrupts();
 }
 
-void moveForward(int speed)
+void moveForward()
 {
-
-  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
-  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
-  analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
+  encoderPID(0);
 }
 
 void moveBackward(int speed)
