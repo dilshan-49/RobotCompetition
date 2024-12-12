@@ -4,6 +4,8 @@
 
 int boxCount = 0;
 int junctionCount = 0;
+int error;
+
 void boxOrdering(int colorNum)
 {
     //***************** initially need to change the thresholds*********************
@@ -55,6 +57,8 @@ void boxOrdering(int colorNum)
 void redDecending(){
     int boxheight = measureHeight();
     //*********** Need to pick Up the Box*****************************
+    delay(1000);
+    boxheight = 10;
     switch (boxheight)
         {
         case 15:
@@ -74,6 +78,7 @@ void redDecending(){
 void blueAsending(){
     int boxheight = measureHeight();
     //*********** Need to pick Up the Box*****************************
+    boxheight = 10;
     switch (boxheight)
         {
         case 5:
@@ -92,18 +97,23 @@ void blueAsending(){
 
 void gotoFirstBox(){
     if (junctionCount == 1){
-        turnLeft(85);
+        
+        turnLeft(100);
         moveForward(baseSpeed);
-        delay(1000);// have to decide the delay according to the distance
-        stopMotors();
+        if (areAllSame(true))// have to decide the delay according to the distance
+            stopMotors();
+        
     }
 }
+
 void gotoSecondBox(){
     if (junctionCount == 1){
-        turnRight(85);
+        turnRight(100
+        );
         movetoJunction();
         junctionCount++;
-        turnLeft(85);
+        turnLeft(100
+        );
         moveForward(baseSpeed);
         delay(1000); // have to decide the delay according to the distance
         stopMotors();
@@ -114,10 +124,12 @@ void gotoSecondBox(){
         stopMotors();
     }
     if (junctionCount == 3){
-        turnLeft(85);
+        turnLeft(100
+        );
         movetoJunction();
         junctionCount--;
-        turnRight(85);
+        turnRight(100
+        );
         moveForward(baseSpeed);
         delay(1000);// have to decide the delay according to the distance
         stopMotors();
@@ -125,21 +137,25 @@ void gotoSecondBox(){
 }
 void gotoThirdBox(){
     if (junctionCount == 1){
-        turnRight(85);
+        turnRight(100
+        );
         movetoJunction();
         junctionCount++;
         movetoJunction();
         junctionCount++;
-        turnLeft(85);
+        turnLeft(100
+        );
         moveForward(baseSpeed);
         delay(1000); // have to decide the delay according to the distance
         stopMotors();
     }
     if (junctionCount == 2){
-        turnRight(85);
+        turnRight(100
+        );
         movetoJunction();
         junctionCount++;
-        turnLeft(85);
+        turnLeft(100
+        );
         moveForward(baseSpeed);
         delay(1000);// have to decide the delay according to the distance
         stopMotors();
@@ -155,14 +171,16 @@ void carryBoxTo(int junctiontoTurn){
     movetoJunction();
     if (junctionCount < junctiontoTurn)
     {
-        turnLeft(85);
+        turnLeft(100
+        );
         movetoJunction();
         junctionCount++;
         nextMoveUp(junctiontoTurn);//
     }
     else if (junctionCount > junctiontoTurn)
     {
-        turnRight(85);
+        turnRight(100
+        );
         movetoJunction();
         junctionCount--;
         nextMoveDown(junctiontoTurn);//
@@ -181,7 +199,8 @@ void nextMoveUp(int junctiontoTurn){
         movetoJunction();
         junctionCount++;
     }
-    turnRight(85);
+    turnRight(100
+    );
     //********** Move forward and place the boxes *************
     turnBack(baseSpeed);
     movetoJunction();
@@ -193,7 +212,8 @@ void nextMoveDown(int junctiontoTurn){
         movetoJunction();
         junctionCount--;
     }
-    turnLeft(85);
+    turnLeft(100
+    );
     //********** Move forward and place the boxes *************
     turnBack(baseSpeed);
     movetoJunction();
@@ -203,13 +223,36 @@ void nextMoveDown(int junctiontoTurn){
 }
 void movetoJunction(){
     //This function is to move the robo forward until it meets a junction
-    while(true/* ! All IR sensor values should be white */){
-        moveForward(baseSpeed);
-    }
-    brake();
+    // black==1
+    // white=0
+    while(true){
+        int error=getError();
+        
+        error_sum += error;
+        error_dif = error - lastError;
+        int correction = Kp * error + Ki * error_sum + Kd * error_dif;
+        int leftSpeed = baseSpeed + correction;
+        int rightSpeed = baseSpeed - correction;
+        leftSpeed = constrain(leftSpeed, -255, 255);
+        rightSpeed = constrain(rightSpeed, -255, 255);
+        Serial.println("222222222222222222222222222222");
+        if (areAllSame(black))
+        {
+            Serial.println("Okkoma black hutto");
+            stopMotors();
+            Serial.println("stop");
+            return;
+        }
+        
+
+        controlMotors(leftSpeed,rightSpeed);
+    
+
+
+}
 }
 int measureHeight(){
-    //----------
+    //----------------
     int height = 10;
     return height;
 }

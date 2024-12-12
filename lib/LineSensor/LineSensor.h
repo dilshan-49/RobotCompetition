@@ -18,15 +18,16 @@
 extern int sensor_array[NUM_SENSORS];
 extern int readings[NUM_SENSORS];
 extern int threshold[NUM_SENSORS];
+extern bool white;
+extern bool black;
 
-void readSensorVals();
+void readSensorVals(bool);
 void calibrateBlack();
 void calibrateWhite();
-
 int getError();
 int detectJunc();
-bool areAllBlack(int *array, int size);
-bool areAllWhite(int *array, int size);
+bool areAllSame(bool);
+bool allBlack();
 extern int blackThreshold[NUM_SENSORS];
 extern int whiteThreshold[NUM_SENSORS];
 
