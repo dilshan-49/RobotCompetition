@@ -4,7 +4,7 @@
 #define ENCODER_LEFT 19
 #define ENCODER_RIGHT 18
 
-int baseSpeed = 100;
+int baseSpeed = 90;
 
 volatile int encL;
 volatile int encR;
@@ -77,16 +77,17 @@ void brake()
 
 void turnLeft(int speed)
 {
-  encR = 0;
-  encL = 0;
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
 
-  
-  while(encL<160 && encR<160){
+  encR = 0;
+  encL = 0;
+
+  while(encL<200 && encR<200){
     moveForward(100);
   }
+
   encL = 0;
   encR = 0;
 
@@ -105,13 +106,13 @@ void turnLeft(int speed)
 // Turn Right
 void turnRight(int speed)
 {
-  encL = 0;
-  encR = 0;
+
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
-
-  while(encL<160 && encR<160){
+  encL = 0;
+  encR = 0;
+  while(encL<200 && encR<200){
     moveForward(100);
   }
   encL = 0;
@@ -144,7 +145,7 @@ void turnBack(int speed)
   encL = 0;
   encR = 0;
 
-while(encL<320 && encR<320){ 
+while(encL<330 && encR<330){ 
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
@@ -165,6 +166,7 @@ void moveForward(int speed)
   digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
+  
 }
 
 void moveBackward(int speed)

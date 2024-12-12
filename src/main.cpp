@@ -1,14 +1,15 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "BoxArranging.h"
 #include <LineSensor.h>
 #include <motorControl.h>
 //#include <Decoder.h>
-#include <BoxArranging.h>
+
 
 #define PidR 44
 #define RightY 45
-#define LeftG 39
+#define LeftG 29
 #define LostGY 41
 #define TjuncB 43
 
@@ -17,9 +18,11 @@
 // PID constants
 
 // 7,0,3
-extern float Kp = 7;    // Proportional gain
-extern float Ki = 0.05; // Integral gain
-extern float Kd = 2.6;  // Derivative gain
+float Kp = 5;    // Proportional gain
+float Ki = 0; // Integral gain
+float Kd = 3;  // Derivative gain
+
+
 
 // other variables
 int max_sensor_values[NUM_SENSORS];
@@ -70,6 +73,8 @@ void setup()
   pinMode(MOTOR_LEFT_BACKWARD, OUTPUT);
   pinMode(LEFT_PWM, OUTPUT);
   pinMode(RIGHT_PWM, OUTPUT);
+
+  
   // calibrateBlack();
   // calibrateWhite();
   // for (int i = 0; i < NUM_SENSORS; i++)
@@ -81,5 +86,6 @@ void setup()
 
 void loop()
 {
-  boxOrdering(0);
+boxOrdering(0);
+
 }

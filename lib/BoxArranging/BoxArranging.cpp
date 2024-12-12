@@ -5,9 +5,6 @@
 int boxCount = 0;
 int junctionCount = 0;
 int error;
-int error_sumx=0;
-int error_difx = 0;
-int lastErrorx;
 
 void boxOrdering(int colorNum)
 {
@@ -60,6 +57,7 @@ void boxOrdering(int colorNum)
 void redDecending(){
     int boxheight = measureHeight();
     //*********** Need to pick Up the Box*****************************
+    delay(1000);
     boxheight = 10;
     switch (boxheight)
         {
@@ -99,12 +97,15 @@ void blueAsending(){
 
 void gotoFirstBox(){
     if (junctionCount == 1){
+        
         turnLeft(100);
         moveForward(baseSpeed);
-        delay(1000);// have to decide the delay according to the distance
-        stopMotors();
+        if (areAllSame(true))// have to decide the delay according to the distance
+            stopMotors();
+        
     }
 }
+
 void gotoSecondBox(){
     if (junctionCount == 1){
         turnRight(100
@@ -222,22 +223,33 @@ void nextMoveDown(int junctiontoTurn){
 }
 void movetoJunction(){
     //This function is to move the robo forward until it meets a junction
-    white = false;
-    while(areAllSame(false)){
-        int error = getError();
-
-        // Calculate PID terms
-        error_sumx += error;
-        error_difx = error - lastErrorx;
-
-        // Calculate the control signal
-        int correction = Kp * error + Ki * error_sumx + Kd * error_difx;
-
-        // Calculate motor speeds based on the correction
+    // black==1
+    // white=0
+    while(true){
+        int error=getError();
+        
+        error_sum += error;
+        error_dif = error - lastError;
+        int correction = Kp * error + Ki * error_sum + Kd * error_dif;
         int leftSpeed = baseSpeed + correction;
         int rightSpeed = baseSpeed - correction;
-    }
-    brake();
+        leftSpeed = constrain(leftSpeed, -255, 255);
+        rightSpeed = constrain(rightSpeed, -255, 255);
+        Serial.println("222222222222222222222222222222");
+        if (areAllSame(black))
+        {
+            Serial.println("Okkoma black hutto");
+            stopMotors();
+            Serial.println("stop");
+            return;
+        }
+        
+
+        controlMotors(leftSpeed,rightSpeed);
+    
+
+
+}
 }
 int measureHeight(){
     //----------------

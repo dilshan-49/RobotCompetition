@@ -6,9 +6,13 @@
 #include <motorControl.h>
 
 extern int error;
-extern float kp;
-extern float ki;
-extern float kd;
+extern float Kd;
+extern float Kp;
+extern float Ki;
+extern float error_sum ;
+extern float error_dif;
+extern float lastError;
+
 
 void boxOrdering(int);
 void redDecending();
