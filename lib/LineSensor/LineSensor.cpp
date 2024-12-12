@@ -7,10 +7,15 @@ int weights[NUM_SENSORS] = {-7, -5, -3, -1, 0, 0, 1, 3, 5, 7};
 int readings[NUM_SENSORS];
 int rawReadings[NUM_SENSORS];
 bool lost = false;
+
 int blackThreshold[NUM_SENSORS] = {300, 300, 300, 300, 300, 300, 300, 300, 300, 300};
 int whiteThreshold[NUM_SENSORS] = {110, 110, 110, 110, 110, 110, 110, 110, 110, 110};
 const bool white = true;
 const bool black = false;
+
+// black==1
+// white=0
+
 
 bool areAllSame(bool color)
 {

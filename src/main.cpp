@@ -78,13 +78,19 @@ void setup()
 
 void loop()
 {
-  int n = ReadingWithPID();
-  int x = getNum(n);
-  for (int i = 0; i < x; i++)
-  {
-    digitalWrite(Blue, HIGH);
-    delay(1000);
-    digitalWrite(Red, LOW);
-    delay(1000);
-  }
+
+  //controlMotors(100,100);
+  // if(areAllSame(black)){
+  //   Serial.println("Black");
+  // }
+  // else{
+  //   Serial.println("White");
+  // }
+  
+  // if (areAllSame(black))
+  // {
+  //   turnBack(90);
+  // }
+  boxOrdering(0);
+
 }
