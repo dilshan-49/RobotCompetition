@@ -1,16 +1,29 @@
 #ifndef BOXARRANGING_H
 #define BOXARRANGING_H
 
-#pragma once
+#include <Arduino.h>
+#include <LineSensor.h>
+#include <motorControl.h>
 
-class BoxArranging
-{
-public:
-    BoxArranging();
-    ~BoxArranging();
+extern int error;
+extern float Kd;
+extern float Kp;
+extern float Ki;
+extern float error_sum ;
+extern float error_dif;
+extern float lastError;
 
-private:
 
-};
+void boxOrdering(int);
+void redDecending();
+void blueAsending();
+void gotoFirstBox();
+void gotoSecondBox();
+void gotoThirdBox();
+void carryBoxTo(int);
+void nextMoveUp(int);
+void nextMoveDown(int);
+void movetoJunction();
+int measureHeight();
 
 #endif
