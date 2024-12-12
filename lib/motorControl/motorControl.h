@@ -15,7 +15,6 @@ extern int baseSpeed;
 extern volatile int encL;
 extern volatile int encR;
 
-
 void controlMotors(int leftSpeed, int rightSpeed);
 void stopMotors();
 void turnLeft(int speed);
@@ -28,4 +27,5 @@ void brake();
 void rotate();
 void attachInterrupts();
 void detachInterrupts();
+
 #endif

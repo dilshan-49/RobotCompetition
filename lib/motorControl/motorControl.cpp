@@ -5,6 +5,11 @@
 #define ENCODER_RIGHT 18
 
 int baseSpeed = 90;
+int error;
+int lastError;
+int errorSum;
+int errorDif;
+int correction;
 
 volatile int encL;
 volatile int encR;
@@ -64,6 +69,19 @@ void controlMotors(int leftSpeed, int rightSpeed)
   rightSpeed = constrain(rightSpeed, 0, 255);
   analogWrite(LEFT_PWM, leftSpeed);
   analogWrite(RIGHT_PWM, rightSpeed);
+}
+
+void encoderPID()
+{
+  error = encL - encR;
+  errorSum += error;
+  errorDif = error - lastError;
+  lastError = error;
+  correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDif;
+  controlMotors(baseSpeed - correction, baseSpeed + correction);
+  Serial.print(error);
+  Serial.print(" - ");
+  Serial.println(correction);
 }
 
 void stopMotors()
