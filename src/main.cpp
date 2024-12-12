@@ -86,6 +86,17 @@ void setup()
 
 void loop()
 {
-boxOrdering(0);
-
+  //controlMotors(100,100);
+  // if(areAllSame(black)){
+  //   Serial.println("Black");
+  // }
+  // else{
+  //   Serial.println("White");
+  // }
+  
+  // if (areAllSame(black))
+  // {
+  //   turnBack(90);
+  // }
+  boxOrdering(0);
 }
