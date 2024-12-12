@@ -23,4 +23,6 @@ void moveBackward(int speed);
 void reverse(int speed);
 void brake();
 void rotate();
+void attachInterrupts();
+void detachInterrupts();
 #endif

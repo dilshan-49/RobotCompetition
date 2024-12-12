@@ -1,6 +1,8 @@
 #include <Decoder.h>
 
 int array[15];
+volatile int rightEncCount = 0;
+volatile int leftEncCount = 0;
 
 int startReading()
 {
@@ -10,7 +12,7 @@ int startReading()
     int counter = 0;
     while (true)
     {
-        readSensorVals();
+        readSensorVals(white);
 
         while (areAllSame(true)) // keep counting till the EOL
         {
@@ -88,4 +90,9 @@ int getNum(int size)
     }
     Serial.println(sum);
     return sum % 5;
+}
+
+void decodeWithPID()
+{
+    readSensorVals(white);
 }
