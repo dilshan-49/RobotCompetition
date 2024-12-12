@@ -51,7 +51,7 @@ void controlMotors(int leftSpeed, int rightSpeed)
   analogWrite(LEFT_PWM, leftSpeed);
   analogWrite(RIGHT_PWM, rightSpeed);
 }
-
+//working properly
 void stopMotors()
 {
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
@@ -61,7 +61,7 @@ void stopMotors()
   analogWrite(LEFT_PWM, 0);
   analogWrite(RIGHT_PWM, 0);
 }
-
+//working properly
 void brake()
 {
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
@@ -74,26 +74,24 @@ void brake()
   analogWrite(LEFT_PWM, 0);
   analogWrite(RIGHT_PWM, 0);
 }
-
+//working properly
 void turnLeft(int speed)
 {
 
-  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
-
-  encR = 0;
-  encL = 0;
-
-  while(encL<200 && encR<200){
-    moveForward(100);
-  }
+  attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
 
   encL = 0;
   encR = 0;
+   while(encL<130 && encR<130){
+     moveForward(100);
+   }
+   encL = 0;
+   encR = 0;
 
-  stopMotors();
+   stopMotors();
 
-  while(encL<155 && encR<155){
+  while(encL<150 && encR<150){
   digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
   digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
   digitalWrite(MOTOR_LEFT_FORWARD, LOW);
@@ -103,24 +101,25 @@ void turnLeft(int speed)
   }
   stopMotors();
 }
-// Turn Right
+// working properly
 void turnRight(int speed)
 {
 
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
+
   encL = 0;
   encR = 0;
-  while(encL<200 && encR<200){
-    moveForward(100);
-  }
-  encL = 0;
-  encR = 0;
+   while(encL<130 && encR<130){
+     moveForward(100);
+   }
+   encL = 0;
+   encR = 0;
 
-  stopMotors();
+   stopMotors();
 
-  while(encL<155 && encR<155){
+  while(encL<150 && encR<150){
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
@@ -138,12 +137,6 @@ void turnBack(int speed)
 
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
-
-  while(encL<160 && encR<160){
-    moveForward(100);
-  }
-  encL = 0;
-  encR = 0;
 
 while(encL<330 && encR<330){ 
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);

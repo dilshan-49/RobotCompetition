@@ -15,21 +15,7 @@ bool black =false;
 
 // black==1
 // white=0
-bool allBlack(){
 
-    int readingSum= readings[0] +
-                    readings[1] +
-                    readings[2] +
-                    readings[3] +
-                    readings[4] +
-                    readings[5] +
-                    readings[6] +
-                    readings[7] +
-                    readings[8] +
-                    readings[9];
-    Serial.print(readingSum);
-    delay(1000);
-}
 
 bool areAllSame(bool color)
 {

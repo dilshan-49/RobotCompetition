@@ -2,6 +2,8 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 
+#define led 35
+
 int boxCount = 0;
 int junctionCount = 0;
 int error;
@@ -57,8 +59,12 @@ void boxOrdering(int colorNum)
 void redDecending(){
     int boxheight = measureHeight();
     //*********** Need to pick Up the Box*****************************
+    digitalWrite(led,HIGH);
+    delay(1000);
+    digitalWrite(led,LOW);
     delay(1000);
     boxheight = 10;
+
     switch (boxheight)
         {
         case 15:
@@ -99,11 +105,14 @@ void gotoFirstBox(){
     if (junctionCount == 1){
         
         turnLeft(100);
-        moveForward(baseSpeed);
-        if (areAllSame(true))// have to decide the delay according to the distance
+        while(!areAllSame(white)){
+            controlMoters();
             stopMotors();
-        
-    }
+            delay(1000);
+        }
+        // moveForward(baseSpeed);
+        // delay(2000);
+        }
 }
 
 void gotoSecondBox(){
@@ -238,9 +247,8 @@ void movetoJunction(){
         Serial.println("222222222222222222222222222222");
         if (areAllSame(black))
         {
-            Serial.println("Okkoma black hutto");
             stopMotors();
-            Serial.println("stop");
+            delay(1000);
             return;
         }
         
