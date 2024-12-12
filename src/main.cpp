@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
-
+#include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
 #include <Decoder.h>
@@ -93,5 +93,8 @@ void loop()
   // }
   
   boxOrdering(0);
+  while(true){
+
+  }
 
 }

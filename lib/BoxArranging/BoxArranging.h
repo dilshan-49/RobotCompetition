@@ -25,5 +25,6 @@ void nextMoveUp(int);
 void nextMoveDown(int);
 void movetoJunction();
 int measureHeight();
+void PIDfollow();
 
 #endif

@@ -12,6 +12,7 @@
 #define LEFT_PWM 7
 
 extern int baseSpeed;
+extern int turnSpeed;
 extern volatile int encL;
 extern volatile int encR;
 

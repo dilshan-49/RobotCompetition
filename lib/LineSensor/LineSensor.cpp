@@ -41,10 +41,10 @@ void readSensorVals(bool color) // white=true & black=false
         {
             readings[i] = rawReadings[i] > blackThreshold[i] ? 1 : 0;
         }
-        Serial.print(" - ");
-        Serial.print(readings[i]);
+        //Serial.print(" - ");
+        //Serial.print(readings[i]);
     }
-    Serial.println();
+    //Serial.println();
 }
 
 int getError()
@@ -61,8 +61,8 @@ int getError()
             sum += weights[i];
             totalActivated++;
         }
-        Serial.print(readings[i]);
-        Serial.print(" - ");
+        //Serial.print(readings[i]);
+        //Serial.print(" - ");
     }
     // If no sensors detect the line, return 0 error (robot is lost)
     if (totalActivated == 0)
