@@ -5,6 +5,7 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 
+
 extern int error;
 extern float Kd;
 extern float Kp;
@@ -12,6 +13,7 @@ extern float Ki;
 extern float error_sum ;
 extern float error_dif;
 extern float lastError;
+
 
 
 void boxOrdering(int);
@@ -25,5 +27,9 @@ void nextMoveUp(int);
 void nextMoveDown(int);
 void movetoJunction();
 int measureHeight();
+void PIDfollow();
+void blinkLED();
+void nextMoveTillWhite();
+void lineFollowTillWhite();
 
 #endif
