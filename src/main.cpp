@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <Wire.h>
-
+// #include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
-#include <Decoder.h>
+// #include <Decoder.h>
 
 #define Blue 33
 #define Green 31
@@ -79,19 +79,7 @@ void setup()
 void loop()
 {
 
-  //controlMotors(100,100);
-  // if(areAllSame(black)){
-  //   Serial.println("Black");
-  // }
-  // else{
-  //   Serial.println("White");
-  // }
-  
-  // if (areAllSame(black))
-  // {
-  //   turnBack(90);
-  // }
-  
-  boxOrdering(0);
-
+  turnRight();
+  delay(1000);
+  turnLeft();
 }
