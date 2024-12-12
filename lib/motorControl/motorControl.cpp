@@ -138,7 +138,7 @@ void turnBack(int speed)
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
   attachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT), rightEncoder, RISING);
 
-while(encL<330 && encR<330){ 
+while(encL<300 && encR<300){ 
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
   digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
   digitalWrite(MOTOR_LEFT_FORWARD, HIGH);

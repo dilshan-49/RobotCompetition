@@ -13,7 +13,7 @@ void boxOrdering(int colorNum)
     //***************** initially need to change the thresholds*********************
     //Blue = 1
     //Red = 0
-
+    
     movetoJunction(); //Initially go towards the first junction
     junctionCount = junctionCount + 1;
     switch (colorNum)
@@ -59,9 +59,9 @@ void boxOrdering(int colorNum)
 void redDecending(){
     int boxheight = measureHeight();
     //*********** Need to pick Up the Box*****************************
-    digitalWrite(led,HIGH);
+    digitalWrite(31,HIGH);
     delay(1000);
-    digitalWrite(led,LOW);
+    digitalWrite(31,LOW);
     delay(1000);
     boxheight = 10;
 
@@ -104,12 +104,24 @@ void blueAsending(){
 void gotoFirstBox(){
     if (junctionCount == 1){
         
-        turnLeft(100);
-        while(!areAllSame(white)){
-            controlMoters();
-            stopMotors();
-            delay(1000);
+        turnLeft(70);
+        while(true){
+            error_sum += error;
+            error_dif = error - lastError;
+            int correction = Kp * error + Ki * error_sum + Kd * error_dif;
+            int leftSpeed = baseSpeed + correction;
+            int rightSpeed = baseSpeed - correction;
+            leftSpeed = constrain(leftSpeed, -255, 255);
+            rightSpeed = constrain(rightSpeed, -255, 255);
+            controlMotors(leftSpeed,rightSpeed);
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
         }
+
         // moveForward(baseSpeed);
         // delay(2000);
         }
@@ -176,12 +188,11 @@ void gotoThirdBox(){
     }
 }
 void carryBoxTo(int junctiontoTurn){
-    turnBack(baseSpeed);
+    turnBack(80);
     movetoJunction();
     if (junctionCount < junctiontoTurn)
     {
-        turnLeft(100
-        );
+        turnLeft(70);
         movetoJunction();
         junctionCount++;
         nextMoveUp(junctiontoTurn);//
@@ -208,8 +219,9 @@ void nextMoveUp(int junctiontoTurn){
         movetoJunction();
         junctionCount++;
     }
-    turnRight(100
-    );
+    turnRight(70);
+    digitalWrite(31,HIGH);
+    delay(5000);
     //********** Move forward and place the boxes *************
     turnBack(baseSpeed);
     movetoJunction();
