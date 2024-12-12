@@ -1,8 +1,13 @@
 #include <Decoder.h>
 
+void encoderPID();
+
+int error;
+int lastError;
+int errorSum;
+int errorDif;
+int correction;
 int array[15];
-volatile int rightEncCount = 0;
-volatile int leftEncCount = 0;
 
 int startReading()
 {
@@ -14,7 +19,7 @@ int startReading()
     {
         readSensorVals(white);
 
-        while (areAllSame(true)) // keep counting till the EOL
+        while (areAllSame(white)) // keep counting till the EOL
         {
             counter++;
             whiteStrip = true;
@@ -94,5 +99,28 @@ int getNum(int size)
 
 void decodeWithPID()
 {
-    readSensorVals(white);
+    encL = 0;
+    encR = 0;
+    attachInterrupts();
+    error = 0;
+    lastError = 0;
+    errorSum = 0;
+    errorDif = 0;
+    correction;
+    while (true)
+    {
+    }
+}
+
+void encoderPID()
+{
+    error = encL - encR;
+    errorSum += error;
+    errorDif = error - lastError;
+    lastError = error;
+    correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDif;
+    controlMotors(baseSpeed - correction, baseSpeed + correction);
+    Serial.print(error);
+    Serial.print(" - ");
+    Serial.println(correction);
 }

@@ -7,56 +7,39 @@ int weights[NUM_SENSORS] = {-7, -5, -3, -1, 0, 0, 1, 3, 5, 7};
 int readings[NUM_SENSORS];
 int rawReadings[NUM_SENSORS];
 bool lost = false;
-int blackThreshold[NUM_SENSORS]={300,300,300,300,300,300,300,300,300,300};
-int whiteThreshold[NUM_SENSORS]={110,110,110,110,110,110,110,110,110,110};
-bool white = true;
-bool black =false;
-
-
-// black==1
-// white=0
-bool allBlack(){
-
-    int readingSum= readings[0] +
-                    readings[1] +
-                    readings[2] +
-                    readings[3] +
-                    readings[4] +
-                    readings[5] +
-                    readings[6] +
-                    readings[7] +
-                    readings[8] +
-                    readings[9];
-    Serial.print(readingSum);
-    delay(1000);
-}
+int blackThreshold[NUM_SENSORS] = {300, 300, 300, 300, 300, 300, 300, 300, 300, 300};
+int whiteThreshold[NUM_SENSORS] = {110, 110, 110, 110, 110, 110, 110, 110, 110, 110};
+const bool white = true;
+const bool black = false;
 
 bool areAllSame(bool color)
 {
     readSensorVals(color);
-    for (int i = 0; i < NUM_SENSORS; i++){
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
         if (!readings[i])
             return false;
     }
     return true;
 }
 
-void readSensorVals(bool color)
-{   for (int i = 0; i < NUM_SENSORS; i++){
+void readSensorVals(bool color) // white=true & black=false
+{
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
         rawReadings[i] = analogRead(sensor_array[i]);
         if (color)
         {
             readings[i] = rawReadings[i] < whiteThreshold[i] ? 0 : 1;
-            
         }
-        else{
+        else
+        {
             readings[i] = rawReadings[i] > blackThreshold[i] ? 1 : 0;
-            
         }
         Serial.print(" - ");
         Serial.print(readings[i]);
     }
-Serial.println();
+    Serial.println();
 }
 
 int getError()
@@ -66,39 +49,16 @@ int getError()
     int totalActivated = 0;
 
     // Calculate weighted sum of sensor readings
-    // for (int i = 0; i < NUM_SENSORS; i++)
-    // {
-    //     if (readings[i])
-    //     { // Set a threshold to determine if a sensor detects the line
-    //         sum += weights[i];
-    //         totalActivated++;
-    //     }
-    //     Serial.print(readings[i]);
-    //     Serial.print(" - ");
-    // }
-    sum = (readings[0] * weights[0]) +
-            (readings[1] * weights[1]) +
-            (readings[2] * weights[2]) +
-            (readings[3] * weights[3]) +
-            (readings[4] * weights[4]) +
-            (readings[5] * weights[5]) +
-            (readings[6] * weights[6]) +
-            (readings[7] * weights[7]) +
-            (readings[8] * weights[8]) +
-            (readings[9] * weights[9]);
-
-    totalActivated = readings[0] +
-                    readings[1] +
-                    readings[2] +
-                    readings[3] +
-                    readings[4] +
-                    readings[5] +
-                    readings[6] +
-                    readings[7] +
-                    readings[8] +
-                    readings[9];
-    
-
+    for (int i = 0; i < NUM_SENSORS; i++)
+    {
+        if (readings[i])
+        { // Set a threshold to determine if a sensor detects the line
+            sum += weights[i];
+            totalActivated++;
+        }
+        Serial.print(readings[i]);
+        Serial.print(" - ");
+    }
     // If no sensors detect the line, return 0 error (robot is lost)
     if (totalActivated == 0)
     {

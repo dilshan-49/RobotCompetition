@@ -9,6 +9,16 @@ int baseSpeed = 90;
 volatile int encL;
 volatile int encR;
 
+void rightEncoder()
+{
+  encR++;
+}
+
+void leftEncoder()
+{
+  encL++;
+}
+
 void attachInterrupts()
 {
   attachInterrupt(digitalPinToInterrupt(ENCODER_LEFT), leftEncoder, RISING);
@@ -19,16 +29,6 @@ void detachInterrupts()
 {
   detachInterrupt(digitalPinToInterrupt(ENCODER_LEFT));
   detachInterrupt(digitalPinToInterrupt(ENCODER_RIGHT));
-}
-
-void rightEncoder()
-{
-  encR++;
-}
-
-void leftEncoder()
-{
-  encL++;
 }
 
 void controlMotors(int leftSpeed, int rightSpeed)
@@ -60,6 +60,8 @@ void controlMotors(int leftSpeed, int rightSpeed)
   }
 
   // Set motor speeds using PWM
+  leftSpeed = constrain(leftSpeed, 0, 255);
+  rightSpeed = constrain(rightSpeed, 0, 255);
   analogWrite(LEFT_PWM, leftSpeed);
   analogWrite(RIGHT_PWM, rightSpeed);
 }

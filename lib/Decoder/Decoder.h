@@ -7,5 +7,6 @@
 
 int startReading();
 int getNum(int size);
+void decodeWithPID();
 
 #endif

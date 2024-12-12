@@ -11,7 +11,10 @@
 #define RIGHT_PWM 6
 #define LEFT_PWM 7
 
-int baseSpeed;
+extern int baseSpeed;
+extern volatile int encL;
+extern volatile int encR;
+
 
 void controlMotors(int leftSpeed, int rightSpeed);
 void stopMotors();
