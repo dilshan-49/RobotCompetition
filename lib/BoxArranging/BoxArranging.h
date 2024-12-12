@@ -29,6 +29,7 @@ void movetoJunction();
 int measureHeight();
 void PIDfollow();
 void blinkLED();
-void 
+void nextMoveTillWhite();
+void lineFollowTillWhite();
 
 #endif

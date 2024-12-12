@@ -69,35 +69,13 @@ void setup()
   pinMode(LEFT_PWM, OUTPUT);
   pinMode(RIGHT_PWM, OUTPUT);
 
-  // calibrateBlack();
-  // calibrateWhite();
-  // for (int i = 0; i < NUM_SENSORS; i++)
-  // {
-  //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
-  // }
 }
 
 void loop()
 {
 
-  //controlMotors(100,100);
-  // if(areAllSame(black)){
-  //   Serial.println("Black");
-  // }
-  // else{
-  //   Serial.println("White");
-  // }
-  
-  // if (areAllSame(black))
-  // {
-  //   turnBack(90);
-  // }
-  initializeArm();
-  delay(2000);
-  grabBox();
+  boxOrdering(0);
   while(true){
 
   }
-  initializeArm();
-  delay()
 }

@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 Servo myServo;
-void initializeArm(){
+void armInitializing(){
     myServo.attach(3); 
     myServo.write(0); 
     delay(1000);

@@ -1,7 +1,10 @@
 #ifndef ROBOARM_H
 #define ROBOARM_H
 
-void initializeArm();
+#include <Servo.h>
+#include <Arduino.h>
+
+void armInitializing();
 void grabBox();
 void releaseBox();
 
