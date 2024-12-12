@@ -1,9 +1,13 @@
 #include <Arduino.h>
 #include <Wire.h>
-// #include <BoxArranging.h>
+#include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
+
+#include <RoboArm.h>
+
 #include <Decoder.h>
+
 
 #define Blue 33
 #define Green 31
@@ -68,16 +72,11 @@ void setup()
   pinMode(LEFT_PWM, OUTPUT);
   pinMode(RIGHT_PWM, OUTPUT);
 
-  // calibrateBlack();
-  // calibrateWhite();
-  // for (int i = 0; i < NUM_SENSORS; i++)
-  // {
-  //   threshold[i] = (blackThreshold[i] + whiteThreshold[i]) / 2;
-  // }
 }
 
 void loop()
 {
+
 
   int size = ReadingWithPID();
   int num = getNum(size);
@@ -107,4 +106,5 @@ void loop()
     delay(100);
   }
   stopMotors();
+
 }

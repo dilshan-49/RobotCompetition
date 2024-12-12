@@ -1,7 +1,6 @@
 #include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
-#include <Servo.h> 
 
 #define led 35
 
@@ -108,73 +107,123 @@ void blueAsending(){
 void gotoFirstBox(){
     if (junctionCount == 1){
         
-        turnLeft();
-        lineFollowTillWhite();
+        turnLeft(turnSpeed);
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
 
         }
 }
 
 void gotoSecondBox(){
     if (junctionCount == 1){
-        turnRight();
+        turnRight(turnSpeed);
         movetoJunction();
         junctionCount++;
-        turnLeft();
-        lineFollowTillWhite();
+        turnLeft(turnSpeed);
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
     }
     if (junctionCount == 2){
-        lineFollowTillWhite();
-
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
     }
     if (junctionCount == 3){
-        turnLeft();
+        turnLeft(turnSpeed);
         movetoJunction();
         junctionCount--;
-        turnRight();
-        lineFollowTillWhite();
-
+        turnRight(turnSpeed);
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
     }
 }
 void gotoThirdBox(){
     if (junctionCount == 1){
-        turnRight();
+        turnRight(turnSpeed);
         movetoJunction();
         junctionCount++;
-
-        moveForward();
+        moveForward(turnSpeed);
         delay(1000);
-
         movetoJunction();
         junctionCount++;
-        turnLeft();
-        lineFollowTillWhite();
-
+        turnLeft(turnSpeed);
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
     }
     if (junctionCount == 2){
-        turnRight();
+        turnRight(turnSpeed);
         movetoJunction();
         junctionCount++;
-        turnLeft();
-        lineFollowTillWhite();
+        turnLeft(turnSpeed);
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
     }
     if (junctionCount == 3){
-        lineFollowTillWhite();
-
+        while(true){
+            PIDfollow();
+            if(areAllSame(white)){
+                stopMotors();
+                delay(1000);
+                return;
+            }
+            
+        }
     }
 }
 void carryBoxTo(int junctiontoTurn){
-    turnBack(true);
+    turnBack(turnSpeed);
     movetoJunction();
     if (junctionCount < junctiontoTurn)
     {
-        turnLeft();
+        turnLeft(turnSpeed);
         movetoJunction();
         junctionCount++;
         nextMoveUp(junctiontoTurn);//
     }
     else if (junctionCount > junctiontoTurn)
     {
-        turnRight();
+        turnRight(turnSpeed);
         movetoJunction();
         junctionCount--;
         nextMoveDown(junctiontoTurn);//
@@ -182,38 +231,74 @@ void carryBoxTo(int junctiontoTurn){
     else if (junctionCount == junctiontoTurn)
     {
     //move untill white meets
-    nextMoveTillWhite();
+    while(true){
+         PIDfollow();
+        if(areAllSame(white)){
+            stopMotors();
+            delay(1000);
+            // place the box
+            blinkLED();
 
+            turnBack(turnSpeed);
+            movetoJunction();
+            stopMotors();
+            return;
+        }
+            
     }
+
+
+        }
 }
 void nextMoveUp(int junctiontoTurn){
     if(junctionCount < junctiontoTurn){
-
-        moveForward();
+        moveForward(turnSpeed);
         delay(1000);
-
         movetoJunction();
         junctionCount++;
     }
-    turnRight();
+    turnRight(turnSpeed);
     // move untill white meets
-    nextMoveTillWhite();
+    while(true){
+         PIDfollow();
+        if(areAllSame(white)){
+            stopMotors();
+            //place the box
+            blinkLED();
 
+            turnBack(turnSpeed);
+            movetoJunction();
+            stopMotors();
+            return;
+        }
+            
+    }
 
 }
 void nextMoveDown(int junctiontoTurn){
     if(junctionCount > junctiontoTurn){
-
-        moveForward();
+        moveForward(turnSpeed);
         delay(1000);
-
         movetoJunction();
         junctionCount--;
     }
-    turnLeft();
+    turnLeft(turnSpeed);
 //move untill white meets
-    nextMoveTillWhite();
+    while(true){
+         PIDfollow();
+        if(areAllSame(white)){
+            stopMotors();
+            delay(1000);
+            //place the box
+            blinkLED();
 
+            turnBack(turnSpeed);
+            movetoJunction();
+            stopMotors();
+            return;
+        }
+            
+    }
 
 
 }
@@ -221,6 +306,7 @@ void movetoJunction(){
     //This function is to move the robo forward until it meets a junction
     // black==1
     // white=0
+
     while(true){
         PIDfollow();
         if (areAllSame(black))
@@ -229,16 +315,19 @@ void movetoJunction(){
             delay(1000);
             return;
         }
+        
 
-    }
+        
+    
+
+
+}
 }
 int measureHeight(){
     //----------------
-    int height = 5;
+    int height = 10;
     return height;
 }
-
-
 void PIDfollow(){
         int error=getError();
         error_sum += error;
@@ -250,44 +339,11 @@ void PIDfollow(){
         rightSpeed = constrain(rightSpeed, -255, 255);
         controlMotors(leftSpeed,rightSpeed);
 }
-
 void blinkLED(){
         digitalWrite(31,HIGH);
         delay(1000);
         digitalWrite(31,LOW);
         delay(1000);
 }
-void lineFollowTillWhite(){
-    while (true)
-    {
-        PIDfollow();
-        if (areAllSame(white))
-        {
-            stopMotors();
-            delay(1000);
-            return;
-        }
-            
-    }
-}
-void nextMoveTillWhite(){
-    while(true){
-         PIDfollow();
-        if(areAllSame(white)){
-            stopMotors();
-            delay(1000);
-            //place the box
-            blinkLED();
-
-            turnBack(true);
-            movetoJunction();
-            stopMotors();
-            return;
-        }
-            
-    }
-}
-
-
 
 

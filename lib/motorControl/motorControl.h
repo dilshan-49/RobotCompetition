@@ -12,6 +12,7 @@
 #define LEFT_PWM 7
 
 extern int baseSpeed;
+extern int turnSpeed;
 extern volatile int encL;
 extern volatile int encR;
 extern bool forward;
@@ -24,7 +25,7 @@ void stopMotors();
 void turnLeft();
 void turnRight();
 void turnBack(bool side); // true for right, false for left
-void moveForward(int speed);
+void moveForward();
 void moveBackward(int speed);
 void reverse(int speed);
 void brake();
