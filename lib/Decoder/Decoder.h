@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <LineSensor.h>
+#include <motorControl.h>
 
 int startReading();
 int getNum(int size);

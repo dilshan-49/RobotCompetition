@@ -1,4 +1,4 @@
-//#include <Decoder.h>
+#include <Decoder.h>
 
 int array[15];
 
@@ -12,7 +12,7 @@ int startReading()
     {
         readSensorVals();
 
-        while (areAllWhite(readings, 8)) // keep counting till the EOL
+        while (areAllSame(true)) // keep counting till the EOL
         {
             counter++;
             whiteStrip = true;
@@ -20,12 +20,12 @@ int startReading()
             Serial.println(" - White Strip");
             x = 0;
             delay(50);
-            readSensorVals();
+            readSensorVals(true);
         }
 
         if (whiteStrip) // at the end of white strip
         {
-            if (areAllBlack(readings, 8))
+            if (areAllSame(false)) // check if black strip
             {
                 whiteStrip = false;
                 array[n] = counter;
