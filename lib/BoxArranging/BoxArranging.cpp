@@ -4,6 +4,11 @@
 
 int boxCount = 0;
 int junctionCount = 0;
+int error;
+int error_sumx=0;
+int error_difx = 0;
+int lastErrorx;
+
 void boxOrdering(int colorNum)
 {
     //***************** initially need to change the thresholds*********************
@@ -219,7 +224,18 @@ void movetoJunction(){
     //This function is to move the robo forward until it meets a junction
     white = false;
     while(areAllSame(false)){
-        moveForward(baseSpeed);
+        int error = getError();
+
+        // Calculate PID terms
+        error_sumx += error;
+        error_difx = error - lastErrorx;
+
+        // Calculate the control signal
+        int correction = Kp * error + Ki * error_sumx + Kd * error_difx;
+
+        // Calculate motor speeds based on the correction
+        int leftSpeed = baseSpeed + correction;
+        int rightSpeed = baseSpeed - correction;
     }
     brake();
 }

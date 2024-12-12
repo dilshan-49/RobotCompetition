@@ -7,8 +7,8 @@ int weights[NUM_SENSORS] = {-11, -7, -4, -2, -1, 1, 2, 4, 7, 11};
 int readings[NUM_SENSORS];
 int rawReadings[NUM_SENSORS];
 bool lost = false;
-int blackThreshold[NUM_SENSORS];
-int whiteThreshold[NUM_SENSORS];
+int blackThreshold[NUM_SENSORS]={300,300,300,300,300,300,300,300,300,300};
+int whiteThreshold[NUM_SENSORS]={110,110,110,110,110,110,110,110,110,110};
 bool white = true;
 
 bool areAllSame(bool color)
@@ -21,25 +21,21 @@ bool areAllSame(bool color)
     return true;
 }
 
-
-
 void readSensorVals(bool color)
 {   for (int i = 0; i < NUM_SENSORS; i++){
         rawReadings[i] = analogRead(sensor_array[i]);
         if (color)
         {
             readings[i] = rawReadings[i] < whiteThreshold[i] ? 1 : 0;
-            // Serial.print(readings[i]);
         }
-        else
-    {
-        for (int i = 0; i < NUM_SENSORS; i++)
-        {
+        else{
             readings[i] = rawReadings[i] > blackThreshold[i] ? 1 : 0;
-            // Serial.print(readings[i]);
+
         }
+        Serial.print(rawReadings[i]);
+        Serial.print(" - ");
+        Serial.println(readings[i]);
     }
-}
 }
 
 int getError()

@@ -2,7 +2,13 @@
 #define BOXARRANGING_H
 
 #include <Arduino.h>
+#include <LineSensor.h>
+#include <motorControl.h>
 
+extern int error;
+extern float kp;
+extern float ki;
+extern float kd;
 
 void boxOrdering(int);
 void redDecending();

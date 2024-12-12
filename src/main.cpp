@@ -17,9 +17,9 @@
 // PID constants
 
 // 7,0,3
-float Kp = 7;    // Proportional gain
-float Ki = 0.05; // Integral gain
-float Kd = 2.6;  // Derivative gain
+extern float Kp = 7;    // Proportional gain
+extern float Ki = 0.05; // Integral gain
+extern float Kd = 2.6;  // Derivative gain
 
 // other variables
 int max_sensor_values[NUM_SENSORS];
