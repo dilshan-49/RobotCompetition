@@ -9,6 +9,7 @@
 #include <MazeSolving.h>
 #include <Ultrasonic.h>
 #include <Decoder.h>
+#include <Adafruit_TCS34725.h>
 
 int max_sensor_values[NUM_SENSORS];
 int min_sensor_values[NUM_SENSORS];
@@ -16,6 +17,7 @@ int sensor_values[NUM_SENSORS];
 
 static int TaskNum = 1;
 static int barcodeNum = 0;
+static int order;
 
 float error_sum = 0;
 float error_dif = 0;
@@ -28,6 +30,8 @@ volatile int enL;
 void calibrateBlack();
 void calibrateWhite();
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 void setup()
 {
 
@@ -71,11 +75,15 @@ void setup()
   {
     TaskNum = 2;
   }
-  displayTask(TaskNum);
 }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 void loop()
 {
+  displayTask(TaskNum);
+
   switch (TaskNum)
   {
   case 1:
@@ -88,10 +96,33 @@ void loop()
       digitalWrite(Red, LOW);
       delay(500);
     }
+    movetoJunction(white);
+    turnRight();
+    blinkAll();
+    TaskNum++;
+    break;
 
+  case 2:
+    movetoJunction(white);
+    mazeSolve(barcodeNum);
+    TaskNum++;
+    ;
+    break;
+
+  case 3:
+    order = get;
+    // move forward till line
+    // color line follow
+    TaskNum++;
+    break;
+
+  case 4:
     break;
   }
 }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 void calibrateBlack()
 {
