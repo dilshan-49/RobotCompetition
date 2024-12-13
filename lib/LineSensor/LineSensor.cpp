@@ -116,7 +116,11 @@ void movetoJunction(bool color)
     error_difIR = 0;
     lastErrorIR = 0;
     encL, encR = 0;
-    moveForward();
+    attachInterrupts();
+    while (encR < 50)
+        moveForward();
+    stopMotors();
+    detachInterrupts();
     delay(500);
     while (true)
     {
@@ -193,4 +197,34 @@ void PIDfollow(bool color)
 
 void colorLineFollow()
 {
+    int counter;
+    while (true)
+    {
+        bool flag = true;
+        PIDfollow(white);
+        if (areAllSame(white))
+        {
+            if (flag)
+            {
+                flag = false;
+                encL, encR = 0;
+                attachInterrupts();
+            }
+            else
+            {
+                if (counter > 100)
+                {
+                    stopMotors();
+                    detachInterrupts();
+                    return;
+                }
+                counter = encL + encR;
+            }
+        }
+        else
+        {
+            flag = true;
+            counter = 0;
+        }
+    }
 }

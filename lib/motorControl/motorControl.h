@@ -25,5 +25,9 @@ void brake();
 void rotate();
 void attachInterrupts();
 void detachInterrupts();
+void suddenLeft();
+void suddenRight();
+void moveForwardtillEncoders(int en);
+void moveBackwardtillEncoders(int en);
 
 #endif

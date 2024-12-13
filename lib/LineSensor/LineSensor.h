@@ -22,6 +22,8 @@ void movetoJunction(bool);
 bool areAllSame(bool);
 bool isHalfSame(bool);
 void PIDfollow(bool);
+void colorLineFollow();
+
 extern int blackThreshold[NUM_SENSORS];
 extern int whiteThreshold[NUM_SENSORS];
 

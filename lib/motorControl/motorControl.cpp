@@ -2,16 +2,17 @@
 #include <LineSensor.h>
 #include <pinDefinitions.h>
 
-int baseSpeed = 75;
+int baseSpeed = 85;
+
 static int error;
 static int lastError;
 static int errorSum;
 static int errorDif;
 static int correction;
 
-float KpEn = 0.05;
+float KpEn = 1;
 float KiEn = 0;
-float KdEn = 0.002;
+float KdEn = 0.21;
 
 volatile int encL;
 volatile int encR;
@@ -88,17 +89,17 @@ static void encoderPID(int caseNum)
   {
 
   case 1:
-    leftspeed = baseSpeed - correction;
-    rightspeed = -(baseSpeed + correction);
+    leftspeed = baseSpeed + 20 - correction;
+    rightspeed = -(baseSpeed + 20 + correction);
     break;
 
   case 2:
-    leftspeed = -(baseSpeed - correction);
-    rightspeed = baseSpeed + correction;
+    leftspeed = -(baseSpeed + 20 - correction);
+    rightspeed = baseSpeed + 20 + correction;
     break;
   case 3:
     leftspeed = -(baseSpeed - correction);
-    rightspeed = -(baseSpeed + 1.25*correction);
+    rightspeed = -(baseSpeed + correction);
     break;
 
   default:
@@ -108,13 +109,6 @@ static void encoderPID(int caseNum)
   }
 
   controlMotors(leftspeed, rightspeed);
-  Serial.print(error);
-  Serial.print(" - ");
-  Serial.println(correction);
-  Serial.print(rightspeed);
-  Serial.print(" | ");
-  Serial.println(leftspeed);
-  delay(100);
 }
 
 void stopMotors()
@@ -147,22 +141,25 @@ void turnLeft()
 
   encL = 0;
   encR = 0;
-  while (encL < 130 && encR < 130)
+  while (encL < 140 && encR < 140)
   {
     encoderPID(0);
   }
-  encL = 0;
-  encR = 0;
 
   stopMotors();
   delay(500);
+  encL = 0;
+  encR = 0;
 
-  while (encL < 130 && encR < 130)
+  while (encL < 125 && encR < 125)
   {
     encoderPID(2);
   }
+  suddenRight();
+  delay(50);
   stopMotors();
   detachInterrupts();
+  delay(500);
 }
 
 // Turn Right
@@ -203,20 +200,30 @@ void turnBack(bool side)
     encoderPID(0);
   }
   stopMotors();
-
+  delay(100);
   encL = 0;
   encR = 0;
 
-  while (encL < 295 && encR < 295)
+  while (encL < 260 && encR < 260)
   {
     if (side)
       encoderPID(1); // turn from right
     else
       encoderPID(2); // turn from left
   }
+  if (side)
+  {
+    suddenLeft();
+  }
+  else
+  {
+    suddenRight();
+  }
 
+  delay(50);
   stopMotors();
   detachInterrupts();
+  delay(500);
 }
 
 void moveForward()
@@ -246,4 +253,47 @@ void rotate()
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
   analogWrite(LEFT_PWM, 90);
   analogWrite(RIGHT_PWM, 90);
+}
+
+void suddenRight()
+{
+  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_FORWARD, HIGH);
+  digitalWrite(MOTOR_LEFT_BACKWARD, LOW);
+}
+void suddenLeft()
+{
+  digitalWrite(MOTOR_RIGHT_FORWARD, HIGH);
+  digitalWrite(MOTOR_RIGHT_BACKWARD, LOW);
+  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
+  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
+}
+
+void moveForwardtillEncoders(int en)
+{
+  encL = 0;
+  encR = 0;
+  attachInterrupts();
+  while (encR < en && encL < en)
+  {
+    moveForward();
+  }
+  stopMotors();
+  detachInterrupts();
+  delay(500);
+}
+
+void moveBackwardtillEncoders(int en)
+{
+  encL = 0;
+  encR = 0;
+  attachInterrupts();
+  while (encR < en && encL < en)
+  {
+    moveBackward();
+  }
+  stopMotors();
+  detachInterrupts();
+  delay(500);
 }

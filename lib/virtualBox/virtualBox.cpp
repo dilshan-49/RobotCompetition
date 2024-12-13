@@ -10,7 +10,7 @@ static int errorSumLocal;
 
 void doAllshitin1(int boxLoc)
 {
-    if (boxLoc == 1)
+    if (boxLoc == 0)
     {
         grabBox();
         encL = 0;
@@ -25,7 +25,18 @@ void doAllshitin1(int boxLoc)
         gotoFour(boxLoc);
         turnLeft();
         movetoJunction(white);
-        turnRight();
+        while (CurrentPos > boxLoc)
+        {
+            movetoJunction(white);
+            CurrentPos--;
+        }
+        while (CurrentPos < targetSpace)
+        {
+            moveBacktillJunc();
+            CurrentPos--;
+        }
+        placeBox();
+        movetoJunction(white);
     }
     else
     {
