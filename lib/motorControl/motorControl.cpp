@@ -84,10 +84,6 @@ static void encoderPID(int caseNum)
   int rightspeed;
   switch (caseNum)
   {
-  case 0:
-    leftspeed = baseSpeed - correction;
-    rightspeed = baseSpeed + correction;
-    break;
 
   case 1:
     leftspeed = baseSpeed - correction;
@@ -99,8 +95,13 @@ static void encoderPID(int caseNum)
     rightspeed = baseSpeed + correction;
     break;
   case 3:
-      leftspeed = -(baseSpeed + correction);
-      rightspeed =-(baseSpeed - correction); 
+    leftspeed = -(baseSpeed + correction);
+    rightspeed = -(baseSpeed - correction);
+    break;
+
+  default:
+    leftspeed = baseSpeed - correction;
+    rightspeed = baseSpeed + correction;
     break;
   }
 

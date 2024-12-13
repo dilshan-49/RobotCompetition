@@ -1,14 +1,13 @@
 #include <Arduino.h>
 #include <Wire.h>
-//#include <BoxArranging.h>
+// #include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
 
 #include <RoboArm.h>
 #include <MazeSolving.h>
-
+#include <Ultrasonic.h>
 #include <Decoder.h>
-
 
 #define Blue 33
 #define Green 31
@@ -53,30 +52,12 @@ void setup()
 
   Serial.begin(9600);
   Serial.println("Calibrating...");
-  pinMode(D1, INPUT);
-  pinMode(D2, INPUT);
-  pinMode(D3, INPUT);
-  pinMode(D4, INPUT);
-  pinMode(D5, INPUT);
-  pinMode(D6, INPUT);
-  pinMode(D7, INPUT);
-  pinMode(D8, INPUT);
-  pinMode(D9, INPUT);
-  pinMode(D10, INPUT);
-  pinMode(Green, OUTPUT);
-  pinMode(Red, OUTPUT);
-  pinMode(Blue, OUTPUT);
-  pinMode(MOTOR_RIGHT_FORWARD, OUTPUT);
-  pinMode(MOTOR_RIGHT_BACKWARD, OUTPUT);
-  pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
-  pinMode(MOTOR_LEFT_BACKWARD, OUTPUT);
-  pinMode(LEFT_PWM, OUTPUT);
-  pinMode(RIGHT_PWM, OUTPUT);
 
+  initializeUltrasonicSensors();
 }
 
 void loop()
 {
-  mazeSolve(0);
-  
+  Serial.println(getDistanceFromSensor(1));
+  delay(1000);
 }
