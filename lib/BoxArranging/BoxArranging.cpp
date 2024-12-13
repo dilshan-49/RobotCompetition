@@ -1,9 +1,10 @@
 #include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
-#include <Servo.h> 
+#include <RoboArm.h>
 
-#define led 35
+
+#define led 31
 
 int boxCount = 0;
 int junctionCount = 0;
@@ -17,6 +18,7 @@ void boxOrdering(int colorNum)
     //Red = 0
     
     movetoJunction(); //Initially go towards the first junction
+    armInitializing();
     junctionCount = junctionCount + 1;
     switch (colorNum)
     {
@@ -24,14 +26,17 @@ void boxOrdering(int colorNum)
 
         //First box-----------------------------------------------
         gotoFirstBox();
+        grabBox();
         redDecending();
 
         //Second box-----------------------------------------------
         gotoSecondBox();
+        grabBox();
         redDecending();
 
         //third box-------------------------------------------------
         gotoThirdBox();
+        grabBox();
         redDecending();
         return;
         break;
@@ -42,14 +47,17 @@ void boxOrdering(int colorNum)
 
         //First box-----------------------------------------------
         gotoFirstBox();
+        grabBox();
         blueAsending();
 
         //Second box-----------------------------------------------
         gotoSecondBox();
+        grabBox();
         blueAsending();
 
         //third box-------------------------------------------------
         gotoThirdBox();
+        grabBox();
         blueAsending();
         return;
         break;
@@ -213,9 +221,7 @@ void nextMoveDown(int junctiontoTurn){
     turnLeft();
 //move untill white meets
     nextMoveTillWhite();
-
-
-
+    
 }
 void movetoJunction(){
     //This function is to move the robo forward until it meets a junction
@@ -278,8 +284,12 @@ void nextMoveTillWhite(){
             delay(1000);
             //place the box
             blinkLED();
-
+            armInitializing();
+            moveBackward(baseSpeed);
+            delay(800);
             turnBack(true);
+            moveBackward(baseSpeed);
+            delay(800);
             movetoJunction();
             stopMotors();
             return;
@@ -287,7 +297,4 @@ void nextMoveTillWhite(){
             
     }
 }
-
-
-
 

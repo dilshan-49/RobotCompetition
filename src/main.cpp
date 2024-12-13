@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <BoxArranging.h>
+//#include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
 
 #include <RoboArm.h>
+#include <MazeSolving.h>
 
 #include <Decoder.h>
 
@@ -76,35 +77,6 @@ void setup()
 
 void loop()
 {
-
-
-  int size = ReadingWithPID();
-  int num = getNum(size);
-  digitalWrite(Blue, LOW);
-  digitalWrite(Red, LOW);
-  digitalWrite(Green, LOW);
-  delay(1000);
-  for (int i = 0; i < num; i++)
-  {
-    digitalWrite(Green, HIGH);
-    delay(1000);
-    digitalWrite(Green, LOW);
-    delay(1000);
-  }
-  delay(100);
-  rotate();
-  for (int i = 0; i < 12; i++)
-  {
-    digitalWrite(Blue, LOW);
-    digitalWrite(Green, HIGH);
-    delay(100);
-    digitalWrite(Green, LOW);
-    digitalWrite(Red, HIGH);
-    delay(100);
-    digitalWrite(Red, LOW);
-    digitalWrite(Blue, HIGH);
-    delay(100);
-  }
-  stopMotors();
-
+  mazeSolve(0);
+  
 }
