@@ -16,10 +16,10 @@ void Ultrasonic::begin()
     pinMode(echoPin, INPUT);
 }
 
-int Ultrasonic::getDistance()
+float Ultrasonic::getDistance()
 {
     long duration;
-    int distance;
+    float distance;
 
     // Clear the trigPin
     digitalWrite(trigPin, LOW);
@@ -46,7 +46,7 @@ void initializeUltrasonicSensors()
     sensor3.begin();
 }
 
-int getDistanceFromSensor(int sensorNumber)
+float getDistanceFromSensor(int sensorNumber)
 {
     switch (sensorNumber)
     {

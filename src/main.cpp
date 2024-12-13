@@ -51,8 +51,10 @@ void setup()
 {
 
   Serial.begin(9600);
+  setupPins();
   Serial.println("Calibrating...");
-
+  calibrateBlack();
+  
   initializeUltrasonicSensors();
 }
 
