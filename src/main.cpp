@@ -141,10 +141,6 @@ void calibrateBlack()
     {
       // getting sesnsor readings
       int val = analogRead(sensor_array[j]);
-      // set the max we found THIS time
-      if (max_sensor_values[j] < val)
-        max_sensor_values[j] = val;
-
       // set the min we found THIS time
       if (min_sensor_values[j] > sensor_values[j])
         min_sensor_values[j] = val;

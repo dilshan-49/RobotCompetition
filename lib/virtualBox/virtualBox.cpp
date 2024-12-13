@@ -31,16 +31,13 @@ void doAllshitin1(int boxLoc)
     {
         turnRight();
         gotoFour(boxLoc);
-        while (CurrentPos < targetSpace)
+        while (CurrentPos > targetSpace)
         {
-            movetoJunction(white);
+            moveBacktillJunc();
             CurrentPos--;
-            if (CurrentPos == boxLoc)
-                grabBox();
-            if (CurrentPos == 1 || CurrentPos == 3)
-                checkWall();
         }
-        moveBacktillJunc();
+        dropBox();
+        placeBox();
     }
 }
 
@@ -115,4 +112,20 @@ static void moveBacktillJunc()
             break;
         }
     }
+}
+
+static void placeBox()
+{
+    moveBacktillJunc();
+    turnLeft();
+    movetoJunction(white);
+    turnRight();
+    movetoJunction(white);
+    turnRight();
+    movetoJunction(white);
+    grabBox();
+    moveBacktillJunc();
+    moveBacktillJunc();
+    dropBox();
+    turnBack(true);
 }
