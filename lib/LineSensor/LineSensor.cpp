@@ -12,6 +12,11 @@ int blackThreshold[NUM_SENSORS] = {300, 300, 300, 300, 300, 300, 300, 300, 300, 
 int whiteThreshold[NUM_SENSORS] = {110, 110, 110, 110, 110, 110, 110, 110, 110, 110};
 const bool white = true;
 const bool black = false;
+bool lineColor = white;
+
+float Kp = 6;
+float Ki = 0;
+float Kd = 0.2;
 
 // black==1
 // white=0
@@ -27,24 +32,28 @@ bool areAllSame(bool color)
     return true;
 }
 
-bool isHalfSame(bool color){
+bool isHalfSame(bool color)
+{
     readSensorVals(color);
     int rcount = 0;
-    for (int i = 5; i < 10;i++)
+    for (int i = 5; i < 10; i++)
     {
-        if(readings[i]){
+        if (readings[i])
+        {
             rcount++;
         }
     }
     int lcount = 0;
-    for (int i = 0; i < 5;i++)
+    for (int i = 0; i < 5; i++)
     {
-        if(readings[i]){
+        if (readings[i])
+        {
             lcount++;
         }
     }
 
-    if(lcount>4 or rcount>4){
+    if (lcount > 4 or rcount > 4)
+    {
         return true;
     }
     return false;
@@ -63,15 +72,15 @@ void readSensorVals(bool color) // white=true & black=false
         {
             readings[i] = rawReadings[i] > blackThreshold[i] ? 1 : 0;
         }
-        //Serial.print(" - ");
-        //Serial.print(readings[i]);
+        // Serial.print(" - ");
+        // Serial.print(readings[i]);
     }
-    //Serial.println();
+    // Serial.println();
 }
 
-int getError()
+int getError(bool color)
 {
-    readSensorVals(black);
+    readSensorVals(color);
     int sum = 0;
     int totalActivated = 0;
 
@@ -98,32 +107,32 @@ int getError()
 }
 
 int detectJunc()
-{ /*
-     readSensorVals(white);
-     // detect T junc
-     if (areAllWhite(&readings[0], 8))
-     {
-         return 1;
-     }
+{
+    //      readSensorVals(white);
+    //      // detect T junc
+    //      if (areAllWhite(&readings[0], 8))
+    //      {
+    //          return 1;
+    //      }
 
-     // detect Right Turn
-     if (areAllWhite(&readings[0], 5))
-     {
-         return 2;
-     }
+    //      // detect Right Turn
+    //      if (areAllWhite(&readings[0], 5))
+    //      {
+    //          return 2;
+    //      }
 
-     // detect Left Turn
-     if (areAllWhite(&readings[3], 5))
-     {
-         return 3;
-     }
-     // Lost the line
-     if (areAllBlack(&readings[0], 8))
-     {
-         return 4;
-     }
-     else*/
-    return 0;
+    //      // detect Left Turn
+    //      if (areAllWhite(&readings[3], 5))
+    //      {
+    //          return 3;
+    //      }
+    //      // Lost the line
+    //      if (areAllBlack(&readings[0], 8))
+    //      {
+    //          return 4;
+    //      }
+    //      else
+    //     return 0;
 }
 
 void calibrateBlack()
@@ -172,4 +181,8 @@ void calibrateWhite()
         x++;
         delay(10);
     }
+}
+
+void IRpidFollow()
+{
 }
