@@ -14,7 +14,12 @@ void doAllshitin1(int boxLoc)
         attachInterrupts();
         movetoJunction(white);
         dropBox();
-        moveBackward();
+        moveBackward(); // till junction
+        turnRight();
+        gotoFour(boxLoc);
+        turnLeft();
+        movetoJunction(white);
+        turnRight();
     }
     else
     {
