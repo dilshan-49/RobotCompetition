@@ -105,6 +105,7 @@ int ReadingWithPID()
                     {
                         Serial.println(array[i]);
                     }
+
                     return n + 1;
                 }
                 delay(5);

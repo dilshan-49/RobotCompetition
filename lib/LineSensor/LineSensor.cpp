@@ -18,6 +18,10 @@ float Kp = 6;
 float Ki = 0;
 float Kd = 0.2;
 
+int error_sumIR = 0;
+int error_difIR = 0;
+int lastErrorIR = 0;
+
 // black==1
 // white=0
 
@@ -106,33 +110,21 @@ int getError(bool color)
     return sum / totalActivated;
 }
 
-int detectJunc()
+void movetoJunction(bool color)
 {
-    //      readSensorVals(white);
-    //      // detect T junc
-    //      if (areAllWhite(&readings[0], 8))
-    //      {
-    //          return 1;
-    //      }
-
-    //      // detect Right Turn
-    //      if (areAllWhite(&readings[0], 5))
-    //      {
-    //          return 2;
-    //      }
-
-    //      // detect Left Turn
-    //      if (areAllWhite(&readings[3], 5))
-    //      {
-    //          return 3;
-    //      }
-    //      // Lost the line
-    //      if (areAllBlack(&readings[0], 8))
-    //      {
-    //          return 4;
-    //      }
-    //      else
-    //     return 0;
+    error_sumIR = 0;
+    error_difIR = 0;
+    lastErrorIR = 0;
+    while (true)
+    {
+        PIDfollow(color);
+        if (areAllSame(white) or isHalfSame(white))
+        {
+            stopMotors();
+            delay(1000);
+            return;
+        }
+    }
 }
 
 void calibrateBlack()
@@ -183,6 +175,15 @@ void calibrateWhite()
     }
 }
 
-void IRpidFollow()
+void PIDfollow(bool color)
 {
+    int errorIR = getError(color);
+    error_sumIR += errorIR;
+    error_difIR = errorIR - lastErrorIR;
+    int correction = Kp * errorIR + Ki * error_sumIR + Kd * error_difIR;
+    int leftSpeed = -(baseSpeed + correction);
+    int rightSpeed = -(baseSpeed - correction);
+    leftSpeed = constrain(leftSpeed, -255, 255);
+    rightSpeed = constrain(rightSpeed, -255, 255);
+    controlMotors(leftSpeed, rightSpeed);
 }

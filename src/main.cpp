@@ -15,6 +15,7 @@ int min_sensor_values[NUM_SENSORS];
 int sensor_values[NUM_SENSORS];
 
 static int TaskNum = 1;
+static int barcodeNum = 0;
 
 float error_sum = 0;
 float error_dif = 0;
@@ -78,7 +79,15 @@ void loop()
   switch (TaskNum)
   {
   case 1:
-    int Size = ReadingWithPID();
+    int size = ReadingWithPID();
+    barcodeNum = getNum(size);
+    for (int i = 0; i < barcodeNum; i++)
+    {
+      digitalWrite(Red, HIGH);
+      delay(500);
+      digitalWrite(Red, LOW);
+      delay(500);
+    }
 
     break;
   }

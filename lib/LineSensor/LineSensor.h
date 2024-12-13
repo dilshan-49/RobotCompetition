@@ -17,11 +17,11 @@ extern float Kd;
 void readSensorVals(bool);
 void calibrateBlack();
 void calibrateWhite();
-int getError();
-int detectJunc();
+int getError(bool);
+void movetoJunction(bool);
 bool areAllSame(bool);
 bool isHalfSame(bool);
-void IRpidFollow();
+void PIDfollow(bool);
 extern int blackThreshold[NUM_SENSORS];
 extern int whiteThreshold[NUM_SENSORS];
 

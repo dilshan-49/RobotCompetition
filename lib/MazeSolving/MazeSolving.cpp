@@ -11,7 +11,7 @@ int wall_Position = 0;
 void mazeSolve(int VBoxPosition)
 {
     // Starts after taking the first right turn
-    movetoJunction();
+    movetoJunction(white);
     if (VBoxPosition == 0)
     {
         boxAtZero();
@@ -22,19 +22,6 @@ void mazeSolve(int VBoxPosition)
     }
 }
 
-void movetoJunction()
-{
-    while (true)
-    {
-        PIDfollow();
-        if (areAllSame(white) or isHalfSame(white))
-        {
-            stopMotors();
-            delay(1000);
-            return;
-        }
-    }
-}
 void movetoJunctionBackward()
 {
     moveBackward();
@@ -58,7 +45,7 @@ void boxAtZero()
     delay(500);
     stopMotors();
 
-    movetoJunction();
+    movetoJunction(white);
 
     digitalWrite(Green, LOW);
     delay(500);
@@ -75,7 +62,7 @@ void boxAtZero()
     // while(true){}
     while (junction_count_Up < 4)
     {
-        movetoJunction();
+        movetoJunction(white);
         moveForward();
         delay(500);
         stopMotors();
@@ -89,7 +76,7 @@ void boxAtZero()
         }
     }
     turnLeft();
-    movetoJunction();
+    movetoJunction(white);
     stopMotors();
     junction_count_Down = junction_count_Up;
     delay(500);
@@ -99,7 +86,7 @@ void boxAtZero()
 
     while (junction_count_Down > 0)
     {
-        movetoJunction();
+        movetoJunction(white);
         moveForward();
         delay(500);
         stopMotors();
@@ -123,7 +110,7 @@ void boxAtZero()
 
     while (junction_count_Down < wall_Position)
     {
-        movetoJunction();
+        movetoJunction(white);
         junction_count_Down++;
     }
     digitalWrite(Green, LOW);
@@ -136,26 +123,26 @@ void noBoxAtZero(int n)
         turnRight();
         while (junction_count_Up < 4)
         {
-            movetoJunction();
+            movetoJunction(white);
         }
         turnBack(true);
         digitalWrite(Green, HIGH);
-        movetoJunction();
+        movetoJunction(white);
         digitalWrite(Green, LOW);
         junction_count_Up--;
         while (junction_count_Up > 0)
         {
-            movetoJunction();
+            movetoJunction(white);
             junction_count_Up--;
         }
         turnRight();
         n = 3;
     }
-    movetoJunction();
+    movetoJunction(white);
     turnRight();
     while (junction_count_Down < 4)
     {
-        movetoJunction();
+        movetoJunction(white);
         junction_count_Down++;
         if (junction_count_Down == 1 || junction_count_Down == 3)
         {
@@ -166,12 +153,12 @@ void noBoxAtZero(int n)
         }
     }
     turnRight();
-    movetoJunction();
+    movetoJunction(white);
     turnRight();
     junction_count_Up = junction_count_Down;
     while (junction_count_Up > n)
     {
-        movetoJunction();
+        movetoJunction(white);
         junction_count_Up--;
     }
     digitalWrite(Green, HIGH);
@@ -179,7 +166,7 @@ void noBoxAtZero(int n)
     {
         while (junction_count_Up > wall_Position)
         {
-            movetoJunction();
+            movetoJunction(white);
             junction_count_Up--;
         }
         digitalWrite(Green, LOW);
@@ -208,10 +195,10 @@ void bringTheBoxToSqure(int rowInMaze)
     {
         for (int i = 0; i < 3; i++)
         {
-            movetoJunction();
+            movetoJunction(white);
             turnRight();
         }
-        movetoJunction();
+        movetoJunction(white);
         digitalWrite(Green, HIGH);
         stopAtSqure();
     }
@@ -219,10 +206,10 @@ void bringTheBoxToSqure(int rowInMaze)
     {
         for (int i = 0; i < 3; i++)
         {
-            movetoJunction();
+            movetoJunction(white);
             turnLeft();
         }
-        movetoJunction();
+        movetoJunction(white);
         turnBack(true);
         digitalWrite(Green, HIGH);
         stopAtSqure();
@@ -233,21 +220,9 @@ void stopAtSqure()
     // write  the code to stop the robo when it get into the squre
 }
 
-void PIDfollow()
-{
-    int error = getError();
-    error_sum += error;
-    error_dif = error - lastError;
-    int correction = Kp * error + Ki * error_sum + Kd * error_dif;
-    int leftSpeed = baseSpeed - correction;
-    int rightSpeed = baseSpeed + correction;
-    leftSpeed = constrain(leftSpeed, -255, 255);
-    rightSpeed = constrain(rightSpeed, -255, 255);
-    controlMotors(leftSpeed, rightSpeed);
-}
 void PIDfollowBackward()
 {
-    int error = getError();
+    int error = getError(white);
     error_sum += error;
     error_dif = error - lastError;
     int correction = Kp * error + Ki * error_sum + Kd * error_dif;

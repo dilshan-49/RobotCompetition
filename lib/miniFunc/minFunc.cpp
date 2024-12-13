@@ -1,5 +1,4 @@
 #include <miniFunc.h>
-
 void displayTask(int CaseNum)
 {
     switch (CaseNum)
