@@ -16,7 +16,6 @@ const bool black = false;
 // black==1
 // white=0
 
-
 bool areAllSame(bool color)
 {
     readSensorVals(color);
@@ -26,6 +25,29 @@ bool areAllSame(bool color)
             return false;
     }
     return true;
+}
+
+bool isHalfSame(bool color){
+    readSensorVals(color);
+    int rcount = 0;
+    for (int i = 5; i < 10;i++)
+    {
+        if(readings[i]){
+            rcount++;
+        }
+    }
+    int lcount = 0;
+    for (int i = 0; i < 5;i++)
+    {
+        if(readings[i]){
+            lcount++;
+        }
+    }
+
+    if(lcount>4 or rcount>4){
+        return true;
+    }
+    return false;
 }
 
 void readSensorVals(bool color) // white=true & black=false
@@ -41,10 +63,10 @@ void readSensorVals(bool color) // white=true & black=false
         {
             readings[i] = rawReadings[i] > blackThreshold[i] ? 1 : 0;
         }
-        Serial.print(" - ");
-        Serial.print(readings[i]);
+        //Serial.print(" - ");
+        //Serial.print(readings[i]);
     }
-    Serial.println();
+    //Serial.println();
 }
 
 int getError()
@@ -61,8 +83,8 @@ int getError()
             sum += weights[i];
             totalActivated++;
         }
-        Serial.print(readings[i]);
-        Serial.print(" - ");
+        //    Serial.print(readings[i]);
+        //    Serial.print(" - ");
     }
     // If no sensors detect the line, return 0 error (robot is lost)
     if (totalActivated == 0)

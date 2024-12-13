@@ -1,6 +1,6 @@
 #include <Decoder.h>
 
-void encoderPID();
+static void encoderPID();
 
 static int error;
 static int lastError;
@@ -8,54 +8,6 @@ static int errorSum;
 static int errorDiff;
 int array[15];
 
-/*int startReading()
-{
-    int x;
-    int n = 0;
-    bool whiteStrip = false;
-    int counter = 0;
-    while (true)
-    {
-        readSensorVals(white);
-
-        while (areAllSame(white)) // keep counting till the EOL
-        {
-            counter++;
-            whiteStrip = true;
-            Serial.print(counter);
-            Serial.println(" - White Strip");
-            x = 0;
-            delay(50);
-            readSensorVals(true);
-        }
-
-        if (whiteStrip) // at the end of white strip
-        {
-            if (areAllSame(false)) // check if black strip
-            {
-                whiteStrip = false;
-                array[n] = counter;
-                Serial.println(counter);
-                n++;
-                x = 0;
-                counter = 0;
-            }
-            else
-            {
-                x++;
-                if (x > 8)
-                {
-                    array[n] = counter; // at the end of encoded strips
-                    Serial.println(array[n]);
-                    return n + 1;
-                }
-            }
-        }
-        delay(50);
-        Serial.print(".");
-    }
-}
-*/
 int getNum(int size)
 {
     if (size < 4)
@@ -122,12 +74,16 @@ int ReadingWithPID()
             delay(5);
             readSensorVals(true);
             encoderPID();
+            digitalWrite(Red, LOW);
+            digitalWrite(Green, HIGH);
         }
         encoderPID();
         if (whiteStrip) // at the end of white strip
         {
             if (areAllSame(black)) // check if black strip
             {
+                digitalWrite(Red, HIGH);
+                digitalWrite(Green, LOW);
                 whiteStrip = false;
                 array[n] = counter;
                 Serial.println(counter);
@@ -139,14 +95,19 @@ int ReadingWithPID()
             {
                 x++;
                 encoderPID();
-                if (x > 8)
+                if (x > 15)
                 {
+                    digitalWrite(Blue, HIGH);
+                    stopMotors();
                     array[n] = counter; // at the end of encoded strips
                     Serial.println(array[n]);
-                    stopMotors();
+                    for (int i = 0; i <= n; i++)
+                    {
+                        Serial.println(array[i]);
+                    }
                     return n + 1;
                 }
-                delay(10);
+                delay(5);
             }
         }
     }
@@ -160,7 +121,7 @@ static void encoderPID()
     lastError = error;
     int correction = 0.5 * error + 0.00 * errorSum + 0.02 * errorDiff;
     controlMotors(baseSpeed - correction, baseSpeed + correction);
-    Serial.print(error);
-    Serial.print(" - ");
-    Serial.println(correction);
+    //    Serial.print(error);
+    //    Serial.print(" - ");
+    //    Serial.println(correction);
 }
