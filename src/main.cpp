@@ -9,6 +9,7 @@
 #include <MazeSolving.h>
 #include <Ultrasonic.h>
 #include <Decoder.h>
+#include <Adafruit_TCS34725.h>
 
 int max_sensor_values[NUM_SENSORS];
 int min_sensor_values[NUM_SENSORS];
@@ -16,6 +17,7 @@ int sensor_values[NUM_SENSORS];
 
 static int TaskNum = 1;
 static int barcodeNum = 0;
+static int order;
 
 float error_sum = 0;
 float error_dif = 0;
@@ -96,7 +98,6 @@ void loop()
     }
     movetoJunction(white);
     turnRight();
-    movetoJunction(white);
     blinkAll();
     TaskNum++;
     break;
@@ -109,7 +110,7 @@ void loop()
     break;
 
   case 3:
-    // detect color
+    order = get;
     // move forward till line
     // color line follow
     TaskNum++;

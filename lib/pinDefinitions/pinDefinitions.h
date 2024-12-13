@@ -36,6 +36,8 @@
 #define S2 47
 #define S1 49
 
+#define TCS34725_POWER_PIN 26
+
 void setupPins();
 
 #endif
