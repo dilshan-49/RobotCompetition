@@ -102,6 +102,7 @@ void loop()
     break;
 
   case 2:
+    movetoJunction(white);
     mazeSolve(barcodeNum);
     TaskNum++;
     ;
