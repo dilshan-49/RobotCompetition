@@ -28,6 +28,8 @@ volatile int enL;
 void calibrateBlack();
 void calibrateWhite();
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 void setup()
 {
 
@@ -71,11 +73,15 @@ void setup()
   {
     TaskNum = 2;
   }
-  displayTask(TaskNum);
 }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 void loop()
 {
+  displayTask(TaskNum);
+
   switch (TaskNum)
   {
   case 1:
@@ -88,10 +94,33 @@ void loop()
       digitalWrite(Red, LOW);
       delay(500);
     }
+    movetoJunction(white);
+    turnRight();
+    movetoJunction(white);
+    blinkAll();
+    TaskNum++;
+    break;
 
+  case 2:
+    mazeSolve(barcodeNum);
+    TaskNum++;
+    ;
+    break;
+
+  case 3:
+    // detect color
+    // move forward till line
+    // color line follow
+    TaskNum++;
+    break;
+
+  case 4:
     break;
   }
 }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 void calibrateBlack()
 {

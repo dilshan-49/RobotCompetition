@@ -7,5 +7,6 @@
 #include <motorControl.h>
 
 void displayTask(int);
+void blinkAll();
 
 #endif

@@ -52,3 +52,18 @@ void displayTask(int CaseNum)
     digitalWrite(Blue, LOW);
     digitalWrite(Green, LOW);
 }
+
+void blinkAll()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        digitalWrite(Red, HIGH);
+        digitalWrite(Green, HIGH);
+        digitalWrite(Blue, HIGH);
+        delay(300);
+        digitalWrite(Red, LOW);
+        digitalWrite(Green, LOW);
+        digitalWrite(Blue, LOW);
+        delay(300);
+    }
+}
