@@ -14,6 +14,7 @@ void setupPins()
     pinMode(D9, INPUT);
     pinMode(D10, INPUT);
 
+
     pinMode(Green, OUTPUT);
     pinMode(Red, OUTPUT);
     pinMode(Blue, OUTPUT);
@@ -36,4 +37,8 @@ void setupPins()
     pinMode(S6, INPUT_PULLUP);
     pinMode(S7, INPUT_PULLUP);
     pinMode(S8, INPUT_PULLUP);
+
+    pinMode(XSHUT_PIN, OUTPUT);
+    digitalWrite(XSHUT_PIN, LOW); 
+
 }

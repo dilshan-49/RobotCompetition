@@ -16,7 +16,7 @@ bool lineColor = white;
 
 float Kp = 6;
 float Ki = 0;
-float Kd = 0.2;
+float Kd = 1.2;
 
 int error_sumIR = 0;
 int error_difIR = 0;
@@ -118,7 +118,7 @@ void movetoJunction(bool color)
     while (true)
     {
         PIDfollow(color);
-        if (areAllSame(white) or isHalfSame(white))
+        if (areAllSame(color) or isHalfSame(color))
         {
             stopMotors();
             delay(1000);
@@ -181,8 +181,8 @@ void PIDfollow(bool color)
     error_sumIR += errorIR;
     error_difIR = errorIR - lastErrorIR;
     int correction = Kp * errorIR + Ki * error_sumIR + Kd * error_difIR;
-    int leftSpeed = -(baseSpeed + correction);
-    int rightSpeed = -(baseSpeed - correction);
+    int leftSpeed = (baseSpeed + correction);
+    int rightSpeed = (baseSpeed - correction);
     leftSpeed = constrain(leftSpeed, -255, 255);
     rightSpeed = constrain(rightSpeed, -255, 255);
     controlMotors(leftSpeed, rightSpeed);

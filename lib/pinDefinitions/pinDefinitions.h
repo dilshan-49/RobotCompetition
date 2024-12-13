@@ -36,6 +36,8 @@
 #define S2 47
 #define S1 49
 
+#define XSHUT_PIN 7 
+
 void setupPins();
 
 #endif
