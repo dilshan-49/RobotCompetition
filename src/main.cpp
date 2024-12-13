@@ -123,61 +123,58 @@ void loop()
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
-  // void calibrateBlack()
-  // {
-  //   digitalWrite(Blue, HIGH);
-  //   for (int j = 0; j < NUM_SENSORS; j++)
-  //   {
-  //     // getting sesnsor readings
-  //     int val = analogRead(sensor_array[j]);
-  //     min_sensor_values[j] = val;
-  //   }
-  //   int x = 0;
-  //   while (x < 300)
-  //   {
+void calibrateBlack()
+{
+  digitalWrite(Blue, HIGH);
+  for (int j = 0; j < NUM_SENSORS; j++)
+  {
+    // getting sesnsor readings
+    int val = analogRead(sensor_array[j]);
+    min_sensor_values[j] = val;
+  }
+  int x = 0;
+  while (x < 300)
+  {
 
-  //     for (int j = 0; j < NUM_SENSORS; j++)
-  //     {
-  //       // getting sesnsor readings
-  //       int val = analogRead(sensor_array[j]);
-  //       // set the max we found THIS time
-  //       if (max_sensor_values[j] < val)
-  //         max_sensor_values[j] = val;
+    for (int j = 0; j < NUM_SENSORS; j++)
+    {
+      // getting sesnsor readings
+      int val = analogRead(sensor_array[j]);
+      // set the min we found THIS time
+      if (min_sensor_values[j] > sensor_values[j])
+        min_sensor_values[j] = val;
+    }
+    delay(10);
+    x++;
+  }
+  digitalWrite(Blue, LOW);
+}
 
-  //       // set the min we found THIS time
-  //       if (min_sensor_values[j] > sensor_values[j])
-  //         min_sensor_values[j] = val;
-  //     }
-  //     delay(10);
-  //     x++;
-  //   }
-  //   digitalWrite(Blue, LOW);
-  // }
+void calibrateWhite()
+{
+  digitalWrite(Red, HIGH);
+  for (int j = 0; j < NUM_SENSORS; j++)
+  {
+    // getting sesnsor readings
+    int val = analogRead(sensor_array[j]);
+    whiteThreshold[j] = val + 50;
+  }
+  int x = 0;
 
-  // void calibrateWhite()
-  // {
-  //   digitalWrite(Red, HIGH);
-  //   for (int j = 0; j < NUM_SENSORS; j++)
-  //   {
-  //     // getting sesnsor readings
-  //     int val = analogRead(sensor_array[j]);
-  //     whiteThreshold[j] = val + 50;
-  //   }
-  //   int x = 0;
+  while (x < 100)
+  {
 
-  //   while (x < 100)
-  //   {
+    for (int j = 0; j < NUM_SENSORS; j++)
+    {
+      // getting sesnsor readings
+      int val = analogRead(sensor_array[j]);
+      // set the max we found THIS time
+      if (whiteThreshold[j] - 50 < val)
+        whiteThreshold[j] = val + 50;
+    }
+    x++;
+    delay(10);
+  }
+  digitalWrite(Red, LOW);
 
-  //     for (int j = 0; j < NUM_SENSORS; j++)
-  //     {
-  //       // getting sesnsor readings
-  //       int val = analogRead(sensor_array[j]);
-  //       // set the max we found THIS time
-  //       if (whiteThreshold[j] - 50 < val)
-  //         whiteThreshold[j] = val + 50;
-  //     }
-  //     x++;
-  //     delay(10);
-  //   }
-  //   digitalWrite(Red, LOW);
 }
