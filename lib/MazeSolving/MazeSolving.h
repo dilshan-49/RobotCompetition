@@ -1,6 +1,8 @@
 #ifndef MAZESOLVING_H
 #define MAZESOLVING_H
 
+#include <pinDefinitions.h>
+
 extern int error;
 extern float Kd;
 extern float Kp;

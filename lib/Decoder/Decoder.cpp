@@ -74,12 +74,16 @@ int ReadingWithPID()
             delay(5);
             readSensorVals(true);
             encoderPID();
+            digitalWrite(Red, LOW);
+            digitalWrite(Green, HIGH);
         }
         encoderPID();
         if (whiteStrip) // at the end of white strip
         {
             if (areAllSame(black)) // check if black strip
             {
+                digitalWrite(Red, HIGH);
+                digitalWrite(Green, LOW);
                 whiteStrip = false;
                 array[n] = counter;
                 Serial.println(counter);
@@ -91,8 +95,9 @@ int ReadingWithPID()
             {
                 x++;
                 encoderPID();
-                if (x > 8)
+                if (x > 15)
                 {
+                    digitalWrite(Blue, HIGH);
                     stopMotors();
                     array[n] = counter; // at the end of encoded strips
                     Serial.println(array[n]);
@@ -102,7 +107,7 @@ int ReadingWithPID()
                     }
                     return n + 1;
                 }
-                delay(10);
+                delay(5);
             }
         }
     }

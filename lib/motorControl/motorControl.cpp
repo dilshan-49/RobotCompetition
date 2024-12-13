@@ -1,14 +1,6 @@
 #include <motorControl.h>
 #include <LineSensor.h>
-
-
-
-
-#include <motorControl.h>
-#include <LineSensor.h>
-
-#define ENCODER_RIGHT 18
-#define ENCODER_LEFT 19
+#include <pinDefinitions.h>
 
 int baseSpeed = 75;
 static int error;
