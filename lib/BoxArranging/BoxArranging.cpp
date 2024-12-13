@@ -2,11 +2,15 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 #include <RoboArm.h>
+#include <Adafruit_VL53L0X.h> 
 
 int boxCount = 0;
 int junctionCount = 0;
 int error;
+static int errorSumLocal;
+static int lastErrorLocal;
 
+static void moveBackPID();
 void boxOrdering(int colorNum)
 {
     //***************** initially need to change the thresholds*********************
@@ -230,7 +234,8 @@ void nextMoveDown(int junctiontoTurn)
 int measureHeight()
 {
     //----------------
-    int height = 5;
+    
+    int height = 
     return height;
 }
 
@@ -267,9 +272,14 @@ void nextMoveTillWhite()
             // place the box
             blinkLED();
             armInitializing();
+
             moveBackward();
             delay(800);
+            stopMotors();
+            delay(800);
+
             turnBack(true);
+            delay(800);
             moveBackward();
             delay(800);
             movetoJunction(black);
@@ -278,3 +288,33 @@ void nextMoveTillWhite()
         }
     }
 }
+
+static void moveBackPID()
+{
+    int errorLocal = getError(white);
+    errorSumLocal += errorLocal;
+    int error_dif = errorLocal - lastErrorLocal;
+    lastErrorLocal = errorLocal;
+    int correction = Kp * errorLocal + Ki * errorSumLocal + Kd * error_dif;
+    int leftSpeed = -(baseSpeed - correction);
+    int rightSpeed = -(baseSpeed + correction);
+    leftSpeed = constrain(leftSpeed, -255, 255);
+    rightSpeed = constrain(rightSpeed, -255, 255);
+    controlMotors(leftSpeed,rightSpeed);
+}
+// static void moveBacktillJunc()
+// {
+//     while (true)
+//     {
+//         moveBackPID();
+//         if (areAllSame(white))
+//         {
+//             encL = 0;
+//             encR = 0;
+//             moveBackward();
+//             delay(500);
+//             stopMotors();
+//             return;
+//         }
+//     }
+// }
