@@ -8,6 +8,6 @@
 
 void displayTask(int);
 void blinkAll();
-void detectRedorBlue();
+int detectRedOrBlue();
 
 #endif

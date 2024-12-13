@@ -2,7 +2,7 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 #include <RoboArm.h>
-#include <Adafruit_VL53L0X.h> 
+#include <Adafruit_VL53L0X.h>
 
 int boxCount = 0;
 int junctionCount = 0;
@@ -234,8 +234,8 @@ void nextMoveDown(int junctiontoTurn)
 int measureHeight()
 {
     //----------------
-    
-    int height = 
+
+    int height = 0;
     return height;
 }
 
@@ -289,19 +289,6 @@ void nextMoveTillWhite()
     }
 }
 
-static void moveBackPID()
-{
-    int errorLocal = getError(white);
-    errorSumLocal += errorLocal;
-    int error_dif = errorLocal - lastErrorLocal;
-    lastErrorLocal = errorLocal;
-    int correction = Kp * errorLocal + Ki * errorSumLocal + Kd * error_dif;
-    int leftSpeed = -(baseSpeed - correction);
-    int rightSpeed = -(baseSpeed + correction);
-    leftSpeed = constrain(leftSpeed, -255, 255);
-    rightSpeed = constrain(rightSpeed, -255, 255);
-    controlMotors(leftSpeed,rightSpeed);
-}
 // static void moveBacktillJunc()
 // {
 //     while (true)

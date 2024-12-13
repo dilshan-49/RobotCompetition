@@ -27,8 +27,6 @@ volatile bool stopCalibration = false; // Flag to indicate if calibration should
 volatile int enR;
 volatile int enL;
 
-
-
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 void setup()
@@ -109,72 +107,17 @@ void loop()
     break;
 
   case 3:
-    order = get;
-    // move forward till line
-    // color line follow
+    int colorSense = detectRedOrBlue();
+    movetoJunction(white);
+    encL, encR = 0;
+    while (areAllSame(white))
+      moveForward();
+    stopMotors();
+    colorLineFolow();
     TaskNum++;
     break;
 
   case 4:
     break;
   }
-}
-
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-
-void calibrateBlack()
-{
-  digitalWrite(Blue, HIGH);
-  for (int j = 0; j < NUM_SENSORS; j++)
-  {
-    // getting sesnsor readings
-    int val = analogRead(sensor_array[j]);
-    min_sensor_values[j] = val;
-  }
-  int x = 0;
-  while (x < 300)
-  {
-
-    for (int j = 0; j < NUM_SENSORS; j++)
-    {
-      // getting sesnsor readings
-      int val = analogRead(sensor_array[j]);
-      // set the min we found THIS time
-      if (min_sensor_values[j] > sensor_values[j])
-        min_sensor_values[j] = val;
-    }
-    delay(10);
-    x++;
-  }
-  digitalWrite(Blue, LOW);
-}
-
-void calibrateWhite()
-{
-  digitalWrite(Red, HIGH);
-  for (int j = 0; j < NUM_SENSORS; j++)
-  {
-    // getting sesnsor readings
-    int val = analogRead(sensor_array[j]);
-    whiteThreshold[j] = val + 50;
-  }
-  int x = 0;
-
-  while (x < 100)
-  {
-
-    for (int j = 0; j < NUM_SENSORS; j++)
-    {
-      // getting sesnsor readings
-      int val = analogRead(sensor_array[j]);
-      // set the max we found THIS time
-      if (whiteThreshold[j] - 50 < val)
-        whiteThreshold[j] = val + 50;
-    }
-    x++;
-    delay(10);
-  }
-  digitalWrite(Red, LOW);
-
 }
