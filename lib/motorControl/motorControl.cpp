@@ -1,10 +1,16 @@
 #include <motorControl.h>
 #include <LineSensor.h>
 
-#define ENCODER_LEFT 19
-#define ENCODER_RIGHT 18
 
-int baseSpeed = 80;
+
+
+#include <motorControl.h>
+#include <LineSensor.h>
+
+#define ENCODER_RIGHT 18
+#define ENCODER_LEFT 19
+
+int baseSpeed = 75;
 static int error;
 static int lastError;
 static int errorSum;
@@ -96,9 +102,13 @@ static void encoderPID(int caseNum)
     rightspeed = -(baseSpeed + correction);
     break;
 
-  default:
+  case 2:
     leftspeed = -(baseSpeed - correction);
     rightspeed = baseSpeed + correction;
+    break;
+  case 3:
+      leftspeed = -(baseSpeed + correction);
+      rightspeed =-(baseSpeed - correction); 
     break;
   }
 
@@ -146,6 +156,7 @@ void turnLeft()
   encR = 0;
 
   stopMotors();
+  delay(500);
 
   while (encL < 150 && encR < 150)
   {
@@ -172,7 +183,7 @@ void turnRight()
   encR = 0;
 
   stopMotors();
-
+  delay(500);
   while (encL < 150 && encR < 150)
   {
     encoderPID(1);
@@ -188,7 +199,7 @@ void turnBack(bool side)
 
   attachInterrupts();
 
-  while (encL < 160 && encR < 160)
+  while (encL < 1 && encR < 1)
   {
     encoderPID(0);
   }
@@ -197,7 +208,7 @@ void turnBack(bool side)
   encL = 0;
   encR = 0;
 
-  while (encL < 300 && encR < 300)
+  while (encL < 310 && encR < 310)
   {
     if (side)
       encoderPID(1); // turn from right
@@ -214,14 +225,9 @@ void moveForward()
   encoderPID(0);
 }
 
-void moveBackward(int speed)
+void moveBackward()
 {
-  digitalWrite(MOTOR_RIGHT_FORWARD, LOW);
-  digitalWrite(MOTOR_RIGHT_BACKWARD, HIGH);
-  digitalWrite(MOTOR_LEFT_FORWARD, LOW);
-  digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
-  analogWrite(LEFT_PWM, speed);
-  analogWrite(RIGHT_PWM, speed);
+  encoderPID(3);
 }
 void reverse(int speed)
 {

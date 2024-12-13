@@ -27,6 +27,7 @@ void calibrateWhite();
 int getError();
 int detectJunc();
 bool areAllSame(bool);
+bool isHalfSame(bool);
 extern int blackThreshold[NUM_SENSORS];
 extern int whiteThreshold[NUM_SENSORS];
 

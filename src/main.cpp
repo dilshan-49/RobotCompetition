@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <BoxArranging.h>
+//#include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
 #include <RoboArm.h>
+#include <MazeSolving.h>
 // #include <Decoder.h>
 
 #define Blue 33
@@ -73,9 +74,6 @@ void setup()
 
 void loop()
 {
-
-  boxOrdering(0);
-  while(true){
-
-  }
+  mazeSolve(0);
+  
 }

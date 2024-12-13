@@ -27,6 +27,29 @@ bool areAllSame(bool color)
     return true;
 }
 
+bool isHalfSame(bool color){
+    readSensorVals(color);
+    int rcount = 0;
+    for (int i = 5; i < 10;i++)
+    {
+        if(readings[i]){
+            rcount++;
+        }
+    }
+    int lcount = 0;
+    for (int i = 0; i < 5;i++)
+    {
+        if(readings[i]){
+            lcount++;
+        }
+    }
+
+    if(lcount>4 or rcount>4){
+        return true;
+    }
+    return false;
+}
+
 void readSensorVals(bool color) // white=true & black=false
 {
     for (int i = 0; i < NUM_SENSORS; i++)
