@@ -16,7 +16,7 @@ bool lineColor = white;
 
 float Kp = 6;
 float Ki = 0;
-float Kd = 0.2;
+float Kd = 1.2;
 
 int error_sumIR = 0;
 int error_difIR = 0;

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <miniFunc.h>
-// #include <BoxArranging.h>
+#include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
 #include <pinDefinitions.h>
@@ -27,8 +27,7 @@ volatile bool stopCalibration = false; // Flag to indicate if calibration should
 volatile int enR;
 volatile int enL;
 
-void calibrateBlack();
-void calibrateWhite();
+
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -177,4 +176,5 @@ void calibrateWhite()
     delay(10);
   }
   digitalWrite(Red, LOW);
+
 }
