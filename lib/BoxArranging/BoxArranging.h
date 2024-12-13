@@ -12,6 +12,7 @@ extern float Ki;
 extern float error_sum;
 extern float error_dif;
 extern float lastError;
+extern int JunctionCount;
 
 void boxOrdering(int);
 void redDecending();
@@ -26,6 +27,5 @@ int measureHeight();
 void blinkLED();
 void nextMoveTillWhite();
 void lineFollowTillWhite();
-
 
 #endif

@@ -2,7 +2,6 @@
 
 Ultrasonic sensor1(TRIG1, ECHO1);
 Ultrasonic sensor2(TRIG2, ECHO2);
-Ultrasonic sensor3(TRIG3, ECHO3);
 
 Ultrasonic::Ultrasonic(int trigPin, int echoPin)
 {
@@ -43,7 +42,6 @@ void initializeUltrasonicSensors()
 {
     sensor1.begin();
     sensor2.begin();
-    sensor3.begin();
 }
 
 float getDistanceFromSensor(int sensorNumber)
@@ -54,8 +52,6 @@ float getDistanceFromSensor(int sensorNumber)
         return sensor1.getDistance();
     case 2:
         return sensor2.getDistance();
-    case 3:
-        return sensor3.getDistance();
     default:
         return -1; // Invalid sensor number
     }

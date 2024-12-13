@@ -10,7 +10,7 @@ static int errorSumLocal;
 
 void doAllshitin1(int boxLoc)
 {
-    if (boxLoc == 1)
+    if (boxLoc == 0)
     {
         grabBox();
         encL = 0;
@@ -25,7 +25,18 @@ void doAllshitin1(int boxLoc)
         gotoFour(boxLoc);
         turnLeft();
         movetoJunction(white);
-        turnRight();
+        while (CurrentPos > boxLoc)
+        {
+            movetoJunction(white);
+            CurrentPos--;
+        }
+        while (CurrentPos < targetSpace)
+        {
+            moveBacktillJunc();
+            CurrentPos--;
+        }
+        placeBox();
+        movetoJunction(white);
     }
     else
     {
@@ -38,6 +49,10 @@ void doAllshitin1(int boxLoc)
         }
         dropBox();
         placeBox();
+        moveBacktillJunc();
+        moveBacktillJunc();
+        dropBox();
+        turnBack(true);
     }
 }
 
@@ -83,32 +98,23 @@ void gotoFour(int boxLoc)
     }
 }
 
-static void moveBacktPID()
-{
-    int errorLocal = getError(white);
-    errorSumLocal += errorLocal;
-    int error_dif = errorLocal - lastErrorLocal;
-    lastErrorLocal = errorLocal;
-    int correction = Kp * errorLocal + Ki * errorSumLocal + Kd * error_dif;
-    int leftSpeed = -(baseSpeed + correction);
-    int rightSpeed = -(baseSpeed - correction);
-    leftSpeed = constrain(leftSpeed, -255, 255);
-    rightSpeed = constrain(rightSpeed, -255, 255);
-    controlMotors(leftSpeed, rightSpeed);
-}
-
 static void moveBacktillJunc()
 {
+    encL = 0;
+    encR = 0;
+    attachInterrupts();
     while (true)
     {
-        moveBacktPID();
+        moveBackward();
         if (areAllSame(white))
         {
+            detachInterrupts();
             encL = 0;
             encR = 0;
             moveBackward();
-            delay(500);
+            delay(800);
             stopMotors();
+
             break;
         }
     }
@@ -124,8 +130,4 @@ static void placeBox()
     turnRight();
     movetoJunction(white);
     grabBox();
-    moveBacktillJunc();
-    moveBacktillJunc();
-    dropBox();
-    turnBack(true);
 }

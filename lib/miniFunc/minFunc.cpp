@@ -1,5 +1,6 @@
 #include <miniFunc.h>
 #include <Wire.h>
+#include <pinDefinitions.h>
 #include <Adafruit_TCS34725.h>
 
 void displayTask(int CaseNum)
@@ -98,13 +99,13 @@ int detectRedOrBlue()
     {
         delay(1000);
         digitalWrite(TCS34725_POWER_PIN, LOW);
-        return 1;
+        return 0;
     }
     else if (green > red && blue > red)
     {
         delay(1000);
         digitalWrite(TCS34725_POWER_PIN, LOW);
-        return 0;
+        return 1;
     }
     else
     {
@@ -112,4 +113,11 @@ int detectRedOrBlue()
         digitalWrite(TCS34725_POWER_PIN, LOW);
         return -1; // If neither red nor blue is dominant
     }
+}
+
+bool checkGate()
+{
+    if (getDistanceFromSensor(2) < 20)
+        return true;
+    return false;
 }

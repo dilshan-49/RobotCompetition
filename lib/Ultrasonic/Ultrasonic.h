@@ -9,9 +9,6 @@
 #define TRIG2 52
 #define ECHO2 53
 
-#define TRIG3 28
-#define ECHO3 30
-
 class Ultrasonic
 {
 public:

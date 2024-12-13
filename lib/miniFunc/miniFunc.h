@@ -5,9 +5,11 @@
 #include <pinDefinitions.h>
 #include <LineSensor.h>
 #include <motorControl.h>
+#include <Ultrasonic.h>
 
 void displayTask(int);
 void blinkAll();
-void detectRedorBlue();
+int detectRedOrBlue();
+bool checkGate();
 
 #endif

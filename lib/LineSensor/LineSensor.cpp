@@ -115,6 +115,13 @@ void movetoJunction(bool color)
     error_sumIR = 0;
     error_difIR = 0;
     lastErrorIR = 0;
+    encL, encR = 0;
+    attachInterrupts();
+    while (encR < 50)
+        moveForward();
+    stopMotors();
+    detachInterrupts();
+    delay(500);
     while (true)
     {
         PIDfollow(color);
@@ -141,7 +148,7 @@ void calibrateBlack()
         for (int j = 0; j < NUM_SENSORS; j++)
         {
             // getting sesnsor readings
-            int val = analogRead(sensor_array[j]) - 100;
+            int val = analogRead(sensor_array[j]) - 150;
             // set the max we found THIS time
             if (blackThreshold[j] < val)
                 blackThreshold[j] = val;
@@ -155,7 +162,7 @@ void calibrateWhite()
     for (int j = 0; j < NUM_SENSORS; j++)
     {
         // getting sesnsor readings
-        int val = analogRead(sensor_array[j]) + 20;
+        int val = analogRead(sensor_array[j]) + 50;
         whiteThreshold[j] = val;
     }
 
@@ -165,7 +172,7 @@ void calibrateWhite()
         for (int j = 0; j < NUM_SENSORS; j++)
         {
             // getting sesnsor readings
-            int val = analogRead(sensor_array[j]) + 20;
+            int val = analogRead(sensor_array[j]) + 50;
             // set the max we found THIS time
             if (whiteThreshold[j] < val)
                 whiteThreshold[j] = val;
@@ -186,4 +193,38 @@ void PIDfollow(bool color)
     leftSpeed = constrain(leftSpeed, -255, 255);
     rightSpeed = constrain(rightSpeed, -255, 255);
     controlMotors(leftSpeed, rightSpeed);
+}
+
+void colorLineFollow()
+{
+    int counter;
+    while (true)
+    {
+        bool flag = true;
+        PIDfollow(white);
+        if (areAllSame(white))
+        {
+            if (flag)
+            {
+                flag = false;
+                encL, encR = 0;
+                attachInterrupts();
+            }
+            else
+            {
+                if (counter > 100)
+                {
+                    stopMotors();
+                    detachInterrupts();
+                    return;
+                }
+                counter = encL + encR;
+            }
+        }
+        else
+        {
+            flag = true;
+            counter = 0;
+        }
+    }
 }
