@@ -38,6 +38,8 @@
 
 #define XSHUT_PIN 7 
 
+#define TCS34725_POWER_PIN 26
+
 void setupPins();
 
 #endif
