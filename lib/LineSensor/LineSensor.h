@@ -23,7 +23,10 @@ bool areAllSame(bool);
 bool isHalfSame(bool);
 void PIDfollow(bool);
 void colorLineFollow();
-
+bool leftsame();
+bool rightsame();
+void ResetErrors();
+bool leftHalfBlack();
 extern int blackThreshold[NUM_SENSORS];
 extern int whiteThreshold[NUM_SENSORS];
 

@@ -63,6 +63,29 @@ bool isHalfSame(bool color)
     return false;
 }
 
+bool rightsame()
+{
+    readSensorVals(white);
+    for (int i = 0; i < 5; i++)
+    {
+        if (!readings[i])
+            return false;
+    }
+    digitalWrite(Red, HIGH);
+    return true;
+}
+
+bool leftsame()
+{
+    readSensorVals(white);
+    for (int i = 0; i < 5; i++)
+    {
+        if (!readings[i])
+            return false;
+    }
+    return true;
+}
+
 void readSensorVals(bool color) // white=true & black=false
 {
     for (int i = 0; i < NUM_SENSORS; i++)
@@ -116,11 +139,8 @@ void movetoJunction(bool color)
     error_difIR = 0;
     lastErrorIR = 0;
     encL, encR = 0;
-    attachInterrupts();
-    while (encR < 50)
-        moveForward();
+    moveForwardtillEncoders(40);
     stopMotors();
-    detachInterrupts();
     delay(500);
     while (true)
     {
@@ -182,6 +202,11 @@ void calibrateWhite()
     }
 }
 
+void ResetErrors()
+{
+    error_sumIR = 0;
+    lastErrorIR = 0;
+}
 void PIDfollow(bool color)
 {
     int errorIR = getError(color);

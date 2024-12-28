@@ -171,21 +171,24 @@ void turnRight()
 
   encL = 0;
   encR = 0;
-  while (encL < 130 && encR < 130)
+  while (encL < 140 && encR < 140)
   {
     encoderPID(0);
   }
-  encL = 0;
-  encR = 0;
 
   stopMotors();
   delay(500);
-  while (encL < 130 && encR < 130)
+  encL = 0;
+  encR = 0;
+  while (encL < 125 && encR < 125)
   {
     encoderPID(1);
   }
+  suddenLeft();
+  delay(50);
   stopMotors();
   detachInterrupts();
+  delay(500);
 }
 
 void turnBack(bool side)
@@ -219,7 +222,6 @@ void turnBack(bool side)
   {
     suddenRight();
   }
-
   delay(50);
   stopMotors();
   detachInterrupts();
@@ -254,7 +256,6 @@ void rotate()
   analogWrite(LEFT_PWM, 90);
   analogWrite(RIGHT_PWM, 90);
 }
-
 void suddenRight()
 {
   digitalWrite(MOTOR_RIGHT_FORWARD, LOW);

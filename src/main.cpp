@@ -18,6 +18,8 @@ int sensor_values[NUM_SENSORS];
 static int TaskNum = 1;
 static int barcodeNum = 0;
 static int order = 1;
+static int colorSense;
+int x;
 
 float error_sum = 0;
 float error_dif = 0;
@@ -35,43 +37,60 @@ void setup()
   Serial.begin(9600);
   setupPins();
   Serial.println("Calibrating...");
-  rotate();
-  calibrateBlack();
-  delay(500);
-  digitalWrite(Green, HIGH);
-  delay(5000);
-  digitalWrite(Green, LOW);
-  calibrateWhite();
+
+  if (digitalRead(S8) == LOW)
+  {
+    digitalWrite(Red, HIGH);
+    delay(1000);
+    calibrateBlack();
+    digitalWrite(Red, LOW);
+    delay(2000);
+    digitalWrite(Green, HIGH);
+    calibrateWhite();
+    digitalWrite(Green, LOW);
+  }
+
   initializeUltrasonicSensors();
-  // change the Line Color based on the Task Number
+  // // change the Line Color based on the Task Number
   if (digitalRead(S7) == LOW)
   {
     TaskNum = 8;
   }
   else if (digitalRead(S6) == LOW)
   {
+    Serial.println("S6");
     TaskNum = 7;
   }
   else if (digitalRead(S5) == LOW)
   {
+    Serial.println("S5");
     TaskNum = 6;
   }
   else if (digitalRead(S4) == LOW)
   {
+    Serial.println("S4");
     TaskNum = 5;
   }
   else if (digitalRead(S3) == LOW)
   {
+    Serial.println("S3");
     TaskNum = 4;
   }
   else if (digitalRead(S2) == LOW)
   {
+    Serial.println("S2");
     TaskNum = 3;
   }
   else if (digitalRead(S1) == LOW)
   {
+    Serial.println("S1");
     TaskNum = 2;
   }
+  // blinkAll();
+  // delay(1000);
+  blinkAll();
+  encL = 0;
+  encR = 0;
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
@@ -79,11 +98,14 @@ void setup()
 
 void loop()
 {
+
   displayTask(TaskNum);
+  Serial.println(TaskNum);
 
   switch (TaskNum)
   {
-  case 1:
+  case 1: // barcode
+  {
     int size = ReadingWithPID();
     barcodeNum = getNum(size);
     for (int i = 0; i < barcodeNum; i++)
@@ -98,41 +120,99 @@ void loop()
     blinkAll();
     TaskNum++;
     break;
+  }
 
-  case 2:
+  case 2: // Maze
+  {
+    Serial.println("Case 2");
     movetoJunction(white);
     doAllshitin1(barcodeNum);
     blinkAll();
     TaskNum++;
-    ;
     break;
+  }
 
-  case 3:
-    moveForward();
-    delay(500);
-    int colorSense = detectRedOrBlue();
-    movetoJunction(white);
+  case 3: // ColorLine Follow
+  {
+    bool flag2 = true;
+
+    colorSense = colorx;
     encL, encR = 0;
-    while (areAllSame(white))
-      moveForward();
-    stopMotors();
-    colorLineFollow();
-    blinkAll();
-    TaskNum++;
-    break;
 
-  case 4:
-    while (!areAllSame(white))
+    moveForwardtillEncoders(15);
+    stopMotors();
+    while (flag2)
     {
-      PIDfollow(true);
+      if (rightsame())
+        turnRight();
+      else if (leftsame())
+        turnLeft();
+      else if (areAllSame(white))
+      {
+        moveForwardtillEncoders(25);
+        if (areAllSame(white))
+        {
+          flag2 = false;
+          blinkAll();
+        }
+        else
+        {
+          PIDfollow(white);
+        }
+      }
+      // colorLineFollow();
+      blinkAll();
+      TaskNum++;
+      break;
     }
-    stopMotors();
-    delay(100);
-    blinkAll();
-    TaskNum++;
-    break;
+  }
+  case 4: // Dotted Line Follow
+  {
+    baseSpeed = 75;
+    while (true)
+    {
+      if (areAllSame(white))
+      {
+        stopMotors();
+        delay(100);
+        blinkAll();
+        TaskNum++;
+        baseSpeed = 85;
+        break;
+      }
+      else
+      {
+        PIDfollow(white);
+        if (areAllSame(black))
+        {
+          moveForwardtillEncoders(20);
+        }
+      }
+    }
+    // {
+    //   /* code */
+    //     bool flag=true
 
-  case 5:
+    //     while (!areAllSame(black))
+    //     {
+    //       if (areAllSame(white))
+    //       {
+    //         stopMotors();
+    //         delay(100);
+    //         blinkAll();
+    //         TaskNum++;
+    //         baseSpeed = 85;
+    //         break;
+    //       }
+    //       PIDfollow(white);
+    //     }
+
+    //     moveForwardtillEncoders(20);
+    // }
+  }
+
+  case 5: // gate
+  {
 
     while (checkGate())
     {
@@ -163,21 +243,75 @@ void loop()
     blinkAll();
     TaskNum++;
     break;
+  }
 
   case 6:
+  {
     boxOrdering(order);
-    while (JunctionCount < 3)
-    {
-      movetoJunction(black);
-      JunctionCount++;
-    }
+    ResetErrors();
     while (!areAllSame(black))
     {
+
       PIDfollow(black);
     }
 
     break;
-
-  case 7:
   }
+  case 7:
+    armInitializing();
+    encL = 0;
+    encR = 0;
+    while (!isHalfSame(black))
+    {
+      moveForward();
+    }
+    stopMotors();
+    delay(500);
+    turnLeft();
+    // float dist = getDistanceFromSensor(2);
+    while (!areAllSame(white))
+    {
+      moveForward();
+    }
+    stopMotors();
+    delay(300);
+    grabBox();
+    turnBack(true);
+    while (!areAllSame(black))
+    {
+      encL = 0;
+      encR = 0;
+      attachInterrupts();
+      moveForward();
+    }
+    stopMotors();
+    detachInterrupts();
+    turnRight();
+    movetoJunction(black);
+    movetoJunction(black);
+    turnRight();
+  }
+  while (!areAllSame(white))
+  {
+    PIDfollow(black);
+  }
+  turnBack(false);
+  while (!areAllSame(black))
+  {
+    encL = 0;
+    encR = 0;
+    attachInterrupts();
+    moveForward();
+  }
+  turnRight();
+  moveForwardtillEncoders(50);
+  releaseBox();
+  moveForwardtillEncoders(50);
+  encL = 0;
+  encR = 0;
+  while (!isHalfSame(black))
+  {
+    moveBackward();
+  }
+  turnLeft();
 }

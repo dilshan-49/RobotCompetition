@@ -4,9 +4,88 @@ static int CurrentPos = 0;
 static int WallPos = 1;
 static float WallDist = 60;
 static int targetSpace = 1;
-
+int colorx;
 static int lastErrorLocal;
 static int errorSumLocal;
+
+static void grabBox()
+{
+    digitalWrite(Blue, HIGH);
+}
+
+static void dropBox()
+{
+    digitalWrite(Blue, LOW);
+}
+
+static void checkWall()
+{
+    float dist = getDistanceFromSensor(1);
+    if (dist < WallDist && CurrentPos == 1)
+    {
+        targetSpace = 3;
+        digitalWrite(Red, HIGH);
+        delay(500);
+        digitalWrite(Red, LOW);
+        colorx = 0;
+    }
+    if (dist < WallDist && CurrentPos == 3)
+    {
+        targetSpace = 1;
+        digitalWrite(Red, HIGH);
+        delay(500);
+        digitalWrite(Red, LOW);
+        colorx = 0;
+    }
+}
+
+static void gotoFour(int boxLoc)
+{
+    while (CurrentPos < 4)
+    {
+        movetoJunction(white);
+        CurrentPos++;
+        if (CurrentPos == boxLoc)
+            grabBox();
+        if (CurrentPos == 1 || CurrentPos == 3)
+            checkWall();
+    }
+}
+
+static void moveBacktillJunc()
+{
+
+    attachInterrupts();
+    moveBackwardtillEncoders(30);
+    encL = 0;
+    encR = 0;
+    while (true)
+    {
+        moveBackward();
+        if (isHalfSame(white))
+        {
+            detachInterrupts();
+            encL = 0;
+            encR = 0;
+
+            stopMotors();
+
+            return;
+        }
+    }
+}
+
+static void placeBox()
+{
+    moveBacktillJunc();
+    turnLeft();
+    movetoJunction(white);
+    turnRight();
+    movetoJunction(white);
+    turnRight();
+    movetoJunction(white);
+    grabBox();
+}
 
 void doAllshitin1(int boxLoc)
 {
@@ -41,93 +120,24 @@ void doAllshitin1(int boxLoc)
     else
     {
         turnRight();
+        moveForwardtillEncoders(30);
         gotoFour(boxLoc);
         while (CurrentPos > targetSpace)
         {
             moveBacktillJunc();
             CurrentPos--;
+            digitalWrite(Green, HIGH);
+            delay(500);
+            digitalWrite(Green, LOW);
         }
         dropBox();
+        stopMotors();
+        digitalWrite(Red, HIGH);
+        delay(500);
         placeBox();
         moveBacktillJunc();
         moveBacktillJunc();
         dropBox();
         turnBack(true);
     }
-}
-
-void grabBox()
-{
-    digitalWrite(Blue, HIGH);
-}
-
-void dropBox()
-{
-    digitalWrite(Blue, LOW);
-}
-
-void checkWall()
-{
-    float dist = getDistanceFromSensor(1);
-    if (dist < WallDist && CurrentPos == 1)
-    {
-        targetSpace = 3;
-        digitalWrite(Red, HIGH);
-        delay(100);
-        digitalWrite(Red, LOW);
-    }
-    if (dist < WallDist && CurrentPos == 3)
-    {
-        targetSpace = 1;
-        digitalWrite(Red, HIGH);
-        delay(100);
-        digitalWrite(Red, LOW);
-    }
-}
-
-void gotoFour(int boxLoc)
-{
-    while (CurrentPos < 4)
-    {
-        movetoJunction(white);
-        CurrentPos++;
-        if (CurrentPos == boxLoc)
-            grabBox();
-        if (CurrentPos == 1 || CurrentPos == 3)
-            checkWall();
-    }
-}
-
-static void moveBacktillJunc()
-{
-    encL = 0;
-    encR = 0;
-    attachInterrupts();
-    while (true)
-    {
-        moveBackward();
-        if (areAllSame(white))
-        {
-            detachInterrupts();
-            encL = 0;
-            encR = 0;
-            moveBackward();
-            delay(800);
-            stopMotors();
-
-            break;
-        }
-    }
-}
-
-static void placeBox()
-{
-    moveBacktillJunc();
-    turnLeft();
-    movetoJunction(white);
-    turnRight();
-    movetoJunction(white);
-    turnRight();
-    movetoJunction(white);
-    grabBox();
 }

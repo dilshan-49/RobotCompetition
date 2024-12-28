@@ -8,5 +8,5 @@
 #include <Ultrasonic.h>
 
 void doAllshitin1(int boxLoc);
-
+extern int colorx;
 #endif
