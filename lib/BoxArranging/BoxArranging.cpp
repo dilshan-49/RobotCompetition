@@ -2,7 +2,9 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 #include <RoboArm.h>
-#include <Adafruit_VL53L0X.h> 
+#include <TOF.h>
+#include <Adafruit_VL53L0X.h>
+#include <SPI.h>
 
 int boxCount = 0;
 int junctionCount = 0;
@@ -155,8 +157,7 @@ void gotoThirdBox()
         movetoJunction(black);
         junctionCount++;
 
-        moveForward();
-        delay(1000);
+        moveForwardtillEncoders(30);
 
         movetoJunction(black);
         junctionCount++;
@@ -204,10 +205,7 @@ void nextMoveUp(int junctiontoTurn)
 {
     if (junctionCount < junctiontoTurn)
     {
-
-        moveForward();
-        delay(1000);
-
+        moveForwardtillEncoders(30);
         movetoJunction(black);
         junctionCount++;
     }
@@ -219,10 +217,7 @@ void nextMoveDown(int junctiontoTurn)
 {
     if (junctionCount > junctiontoTurn)
     {
-
-        moveForward();
-        delay(1000);
-
+        moveBackwardtillEncoders(30);
         movetoJunction(black);
         junctionCount--;
     }
@@ -234,8 +229,9 @@ void nextMoveDown(int junctiontoTurn)
 int measureHeight()
 {
     //----------------
-    
-    int height = 
+
+    int height = Find_Box();
+    Serial.println(height);
     return height;
 }
 
@@ -273,15 +269,11 @@ void nextMoveTillWhite()
             blinkLED();
             armInitializing();
 
-            moveBackward();
-            delay(800);
+            moveBackwardtillEncoders(80);
             stopMotors();
-            delay(800);
 
             turnBack(true);
-            delay(800);
-            moveBackward();
-            delay(800);
+            moveBackwardtillEncoders(80);
             movetoJunction(black);
             stopMotors();
             return;
@@ -300,7 +292,7 @@ static void moveBackPID()
     int rightSpeed = -(baseSpeed + correction);
     leftSpeed = constrain(leftSpeed, -255, 255);
     rightSpeed = constrain(rightSpeed, -255, 255);
-    controlMotors(leftSpeed,rightSpeed);
+    controlMotors(leftSpeed, rightSpeed);
 }
 // static void moveBacktillJunc()
 // {
