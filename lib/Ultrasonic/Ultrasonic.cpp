@@ -1,76 +1,62 @@
-/*
- * Ultrasonic.cpp
- *
- * Library for Ultrasonic Ranging Module in a minimalist way
- *
- * created 3 Apr 2014
- * by Erick Simões (github: @ErickSimoes | twitter: @AloErickSimoes)
- * modified 23 Jan 2017
- * by Erick Simões (github: @ErickSimoes | twitter: @AloErickSimoes)
- * modified 04 Mar 2017
- * by Erick Simões (github: @ErickSimoes | twitter: @AloErickSimoes)
- * modified 15 May 2017
- * by Eliot Lim    (github: @eliotlim)
- * modified 10 Jun 2018
- * by Erick Simões (github: @ErickSimoes | twitter: @AloErickSimoes)
- * modified 14 Jun 2018
- * by Otacilio Maia (github: @OtacilioN | linkedIn: in/otacilio)
- *
- * Released into the MIT License.
- */
+#include <Ultrasonic.h>
 
-#if ARDUINO >= 100
-  #include <Arduino.h>
-#else
-  #include <WProgram.h>
-#endif
+Ultrasonic sensor1(TRIG1, ECHO1);
+Ultrasonic sensor2(TRIG2, ECHO2);
+Ultrasonic sensor3(TRIG3, ECHO3);
 
-#include "Ultrasonic.h"
-
-Ultrasonic::Ultrasonic(uint8_t trigPin, uint8_t echoPin, unsigned long timeOut) {
-  trig = trigPin;
-  echo = echoPin;
-  threePins = trig == echo ? true : false;
-  pinMode(trig, OUTPUT);
-  pinMode(echo, INPUT);
-  timeout = timeOut;
+Ultrasonic::Ultrasonic(int trigPin, int echoPin)
+{
+    this->trigPin = trigPin;
+    this->echoPin = echoPin;
 }
 
-unsigned int Ultrasonic::timing() {
-  if (threePins)
-    pinMode(trig, OUTPUT);
-
-  digitalWrite(trig, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-  delay(30);
-
-  if (threePins)
-    pinMode(trig, INPUT);
-  
-  previousMicros = micros();
-  while(!digitalRead(echo) && (micros() - previousMicros) <= timeout); // wait for the echo pin HIGH or timeout
-  previousMicros = micros();
-  while(digitalRead(echo)  && (micros() - previousMicros) <= timeout); // wait for the echo pin LOW or timeout
-
-  return micros() - previousMicros; // duration
+void Ultrasonic::begin()
+{
+    pinMode(trigPin, OUTPUT);
+    pinMode(echoPin, INPUT);
 }
 
-/*
- * If the unit of measure is not passed as a parameter,
- * sby default, it will return the distance in centimeters.
- * To change the default, replace CM by INC.
- */
-unsigned int Ultrasonic::read(uint8_t und) {
-  return timing() / und / 2;  //distance by divisor
+float Ultrasonic::getDistance()
+{
+    long duration;
+    float distance;
+
+    // Clear the trigPin
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+
+    // Set the trigPin HIGH for 10 microseconds
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+
+    // Read the echoPin, returns the sound wave travel time in microseconds
+    duration = pulseIn(echoPin, HIGH);
+
+    // Calculate the distance
+    distance = duration * 0.034 / 2;
+
+    return distance;
 }
 
-/*
- * This method is too verbal, so, it's deprecated.
- * Use read() instead.
- */
-unsigned int Ultrasonic::distanceRead(uint8_t und) {
-  return read(und);
+void initializeUltrasonicSensors()
+{
+    sensor1.begin();
+    sensor2.begin();
+    sensor3.begin();
+}
+
+float getDistanceFromSensor(int sensorNumber)
+{
+    switch (sensorNumber)
+    {
+    case 1:
+        return sensor1.getDistance();
+    case 2:
+        return sensor2.getDistance();
+    case 3:
+        return sensor3.getDistance();
+    default:
+        return -1; // Invalid sensor number
+    }
 }

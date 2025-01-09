@@ -2,9 +2,7 @@
 #include <LineSensor.h>
 #include <motorControl.h>
 
-#define Blue 33
-#define Green 31
-#define Red 29
+#include <pinDefinitions.h>
 
 int junction_count_Up = 0;
 int junction_count_Down = 0;
@@ -13,7 +11,7 @@ int wall_Position = 0;
 void mazeSolve(int VBoxPosition)
 {
     // Starts after taking the first right turn
-    movetoJunction();
+    movetoJunction(white);
     if (VBoxPosition == 0)
     {
         boxAtZero();
@@ -24,19 +22,8 @@ void mazeSolve(int VBoxPosition)
     }
 }
 
-void movetoJunction(){
-    while(true){
-        PIDfollow();
-        if (areAllSame(white) or isHalfSame(white))
-        {
-            stopMotors();
-            delay(1000);
-            return;
-        }
-    }
-    
-}
-void movetoJunctionBackward(){
+void movetoJunctionBackward()
+{
     moveBackward();
     delay(500);
     stopMotors();
@@ -51,15 +38,16 @@ void movetoJunctionBackward(){
         }
     }
 }
-void boxAtZero(){
-    digitalWrite(Green,HIGH);
+void boxAtZero()
+{
+    digitalWrite(Green, HIGH);
     moveForward();
     delay(500);
     stopMotors();
 
-    movetoJunction();
+    movetoJunction(white);
 
-    digitalWrite(Green,LOW);
+    digitalWrite(Green, LOW);
     delay(500);
 
     movetoJunctionBackward();
@@ -74,19 +62,21 @@ void boxAtZero(){
     // while(true){}
     while (junction_count_Up < 4)
     {
-        movetoJunction();
+        movetoJunction(white);
         moveForward();
         delay(500);
         stopMotors();
         junction_count_Up++;
-        if(junction_count_Up==1 || junction_count_Up==3){
-            if(CheckWall()){
+        if (junction_count_Up == 1 || junction_count_Up == 3)
+        {
+            if (CheckWall())
+            {
                 wall_Position = junction_count_Up;
             }
         }
-    }    
+    }
     turnLeft();
-    movetoJunction();
+    movetoJunction(white);
     stopMotors();
     junction_count_Down = junction_count_Up;
     delay(500);
@@ -96,7 +86,7 @@ void boxAtZero(){
 
     while (junction_count_Down > 0)
     {
-        movetoJunction();
+        movetoJunction(white);
         moveForward();
         delay(500);
         stopMotors();
@@ -110,131 +100,135 @@ void boxAtZero(){
     movetoJunctionBackward();
     delay(500);
     digitalWrite(Green, HIGH);
-    while(true){}
+    while (true)
+    {
+    }
 
     turnBack(true);
     moveBackward();
     delay(500);
 
-
-    
-    while(junction_count_Down<wall_Position){
-        movetoJunction();
+    while (junction_count_Down < wall_Position)
+    {
+        movetoJunction(white);
         junction_count_Down++;
     }
-    digitalWrite(Green,LOW);
+    digitalWrite(Green, LOW);
     bringTheBoxToSqure(2);
 }
-void noBoxAtZero(int n){
-    if(n==4){
+void noBoxAtZero(int n)
+{
+    if (n == 4)
+    {
         turnRight();
-        while(junction_count_Up<4){
-            movetoJunction();
+        while (junction_count_Up < 4)
+        {
+            movetoJunction(white);
         }
         turnBack(true);
         digitalWrite(Green, HIGH);
-        movetoJunction();
+        movetoJunction(white);
         digitalWrite(Green, LOW);
-        junction_count_Up-- ;
-        while(junction_count_Up>0){
-            movetoJunction();
+        junction_count_Up--;
+        while (junction_count_Up > 0)
+        {
+            movetoJunction(white);
             junction_count_Up--;
         }
         turnRight();
         n = 3;
     }
-    movetoJunction();
+    movetoJunction(white);
     turnRight();
     while (junction_count_Down < 4)
     {
-        movetoJunction();
+        movetoJunction(white);
         junction_count_Down++;
-        if(junction_count_Down==1 || junction_count_Down==3){
-            if(CheckWall()){
+        if (junction_count_Down == 1 || junction_count_Down == 3)
+        {
+            if (CheckWall())
+            {
                 wall_Position = junction_count_Down;
             }
         }
     }
     turnRight();
-    movetoJunction();
+    movetoJunction(white);
     turnRight();
     junction_count_Up = junction_count_Down;
-    while(junction_count_Up>n){
-        movetoJunction();
+    while (junction_count_Up > n)
+    {
+        movetoJunction(white);
         junction_count_Up--;
     }
-    digitalWrite(Green,HIGH);
-    if(junction_count_Up>wall_Position){
-        while(junction_count_Up>wall_Position){
-            movetoJunction();
+    digitalWrite(Green, HIGH);
+    if (junction_count_Up > wall_Position)
+    {
+        while (junction_count_Up > wall_Position)
+        {
+            movetoJunction(white);
             junction_count_Up--;
         }
-        digitalWrite(Green,LOW);
+        digitalWrite(Green, LOW);
         turnBack(true);
         bringTheBoxToSqure(1);
     }
-    if(junction_count_Up<wall_Position){
-
-        }
-    if(junction_count_Up==wall_Position){
-
+    if (junction_count_Up < wall_Position)
+    {
     }
-
+    if (junction_count_Up == wall_Position)
+    {
+    }
 }
-bool CheckWall(){
+bool CheckWall()
+{
     // ultrasonic sensor codei
-    if(junction_count_Down==3 or junction_count_Up==3){
+    if (junction_count_Down == 3 or junction_count_Up == 3)
+    {
         return true;
     }
     return false;
 }
-void bringTheBoxToSqure(int rowInMaze){
-    if(rowInMaze==2){
-        for (int i = 0; i < 3 ; i++)
+void bringTheBoxToSqure(int rowInMaze)
+{
+    if (rowInMaze == 2)
+    {
+        for (int i = 0; i < 3; i++)
         {
-            movetoJunction();
+            movetoJunction(white);
             turnRight();
         }
-        movetoJunction();
+        movetoJunction(white);
         digitalWrite(Green, HIGH);
         stopAtSqure();
     }
-    if(rowInMaze==1){
-        for (int i = 0; i < 3 ; i++)
+    if (rowInMaze == 1)
+    {
+        for (int i = 0; i < 3; i++)
         {
-            movetoJunction();
+            movetoJunction(white);
             turnLeft();
         }
-        movetoJunction();
+        movetoJunction(white);
         turnBack(true);
         digitalWrite(Green, HIGH);
         stopAtSqure();
     }
 }
-void stopAtSqure(){
-    //write  the code to stop the robo when it get into the squre
-    }
+void stopAtSqure()
+{
+    // write  the code to stop the robo when it get into the squre
+}
 
-void PIDfollow(){
-        int error=getError();
-        error_sum += error;
-        error_dif = error - lastError;
-        int correction = Kp * error + Ki * error_sum + Kd * error_dif;
-        int leftSpeed = baseSpeed - correction;
-        int rightSpeed = baseSpeed + correction;
-        leftSpeed = constrain(leftSpeed, -255, 255);
-        rightSpeed = constrain(rightSpeed, -255, 255);
-        controlMotors(leftSpeed,rightSpeed);
+void PIDfollowBackward()
+{
+    int error = getError(white);
+    error_sum += error;
+    error_dif = error - lastError;
+    int correction = Kp * error + Ki * error_sum + Kd * error_dif;
+    int leftSpeed = -(baseSpeed + correction);
+    int rightSpeed = -(baseSpeed - correction);
+    leftSpeed = constrain(leftSpeed, -255, 255);
+    rightSpeed = constrain(rightSpeed, -255, 255);
+    controlMotors(leftSpeed, rightSpeed);
 }
-void PIDfollowBackward(){
-        int error=getError();
-        error_sum += error;
-        error_dif = error - lastError;
-        int correction = Kp * error + Ki * error_sum + Kd * error_dif;
-        int leftSpeed = -(baseSpeed + correction);
-        int rightSpeed =-(baseSpeed - correction); 
-        leftSpeed = constrain(leftSpeed, -255, 255);
-        rightSpeed = constrain(rightSpeed, -255, 255);
-        controlMotors(leftSpeed,rightSpeed);
-}
-    

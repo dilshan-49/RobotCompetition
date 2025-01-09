@@ -1,34 +1,23 @@
 #include <Arduino.h>
 #include <Wire.h>
-//#include <BoxArranging.h>
+#include <miniFunc.h>
+#include <BoxArranging.h>
 #include <LineSensor.h>
 #include <motorControl.h>
-
+#include <pinDefinitions.h>
 #include <RoboArm.h>
 #include <MazeSolving.h>
-
+#include <Ultrasonic.h>
 #include <Decoder.h>
+#include <Adafruit_TCS34725.h>
 
-
-#define Blue 33
-#define Green 31
-#define Red 29
-
-// function declarations
-
-// PID constants
-
-// 7,0,3
-float Kp = 5; // Proportional gain
-float Ki = 0; // Integral gain
-float Kd = 3; // Derivative gain
-
-// other variables
 int max_sensor_values[NUM_SENSORS];
 int min_sensor_values[NUM_SENSORS];
 int sensor_values[NUM_SENSORS];
 
-// int weights[NUM_SENSORS] = {7,4,2,1,-1,-2,-4,-7};
+static int TaskNum = 1;
+static int barcodeNum = 0;
+static int order;
 
 float error_sum = 0;
 float error_dif = 0;
@@ -38,45 +27,154 @@ volatile bool stopCalibration = false; // Flag to indicate if calibration should
 volatile int enR;
 volatile int enL;
 
-void left()
-{
-  enL++;
-}
 
-void right()
-{
-  enR++;
-}
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 void setup()
 {
 
   Serial.begin(9600);
+  setupPins();
   Serial.println("Calibrating...");
-  pinMode(D1, INPUT);
-  pinMode(D2, INPUT);
-  pinMode(D3, INPUT);
-  pinMode(D4, INPUT);
-  pinMode(D5, INPUT);
-  pinMode(D6, INPUT);
-  pinMode(D7, INPUT);
-  pinMode(D8, INPUT);
-  pinMode(D9, INPUT);
-  pinMode(D10, INPUT);
-  pinMode(Green, OUTPUT);
-  pinMode(Red, OUTPUT);
-  pinMode(Blue, OUTPUT);
-  pinMode(MOTOR_RIGHT_FORWARD, OUTPUT);
-  pinMode(MOTOR_RIGHT_BACKWARD, OUTPUT);
-  pinMode(MOTOR_LEFT_FORWARD, OUTPUT);
-  pinMode(MOTOR_LEFT_BACKWARD, OUTPUT);
-  pinMode(LEFT_PWM, OUTPUT);
-  pinMode(RIGHT_PWM, OUTPUT);
-
+  rotate();
+  calibrateBlack();
+  delay(500);
+  digitalWrite(Green, HIGH);
+  delay(5000);
+  digitalWrite(Green, LOW);
+  calibrateWhite();
+  initializeUltrasonicSensors();
+  // change the Line Color based on the Task Number
+  if (digitalRead(S7) == LOW)
+  {
+    TaskNum = 8;
+  }
+  else if (digitalRead(S6) == LOW)
+  {
+    TaskNum = 7;
+  }
+  else if (digitalRead(S5) == LOW)
+  {
+    TaskNum = 6;
+  }
+  else if (digitalRead(S4) == LOW)
+  {
+    TaskNum = 5;
+  }
+  else if (digitalRead(S3) == LOW)
+  {
+    TaskNum = 4;
+  }
+  else if (digitalRead(S2) == LOW)
+  {
+    TaskNum = 3;
+  }
+  else if (digitalRead(S1) == LOW)
+  {
+    TaskNum = 2;
+  }
 }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 
 void loop()
 {
-  mazeSolve(0);
-  
+  displayTask(TaskNum);
+
+  switch (TaskNum)
+  {
+  case 1:
+    int size = ReadingWithPID();
+    barcodeNum = getNum(size);
+    for (int i = 0; i < barcodeNum; i++)
+    {
+      digitalWrite(Red, HIGH);
+      delay(500);
+      digitalWrite(Red, LOW);
+      delay(500);
+    }
+    movetoJunction(white);
+    turnRight();
+    blinkAll();
+    TaskNum++;
+    break;
+
+  case 2:
+    movetoJunction(white);
+    mazeSolve(barcodeNum);
+    TaskNum++;
+    ;
+    break;
+
+  case 3:
+    order = get;
+    // move forward till line
+    // color line follow
+    TaskNum++;
+    break;
+
+  case 4:
+    break;
+  }
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+void calibrateBlack()
+{
+  digitalWrite(Blue, HIGH);
+  for (int j = 0; j < NUM_SENSORS; j++)
+  {
+    // getting sesnsor readings
+    int val = analogRead(sensor_array[j]);
+    min_sensor_values[j] = val;
+  }
+  int x = 0;
+  while (x < 300)
+  {
+
+    for (int j = 0; j < NUM_SENSORS; j++)
+    {
+      // getting sesnsor readings
+      int val = analogRead(sensor_array[j]);
+      // set the min we found THIS time
+      if (min_sensor_values[j] > sensor_values[j])
+        min_sensor_values[j] = val;
+    }
+    delay(10);
+    x++;
+  }
+  digitalWrite(Blue, LOW);
+}
+
+void calibrateWhite()
+{
+  digitalWrite(Red, HIGH);
+  for (int j = 0; j < NUM_SENSORS; j++)
+  {
+    // getting sesnsor readings
+    int val = analogRead(sensor_array[j]);
+    whiteThreshold[j] = val + 50;
+  }
+  int x = 0;
+
+  while (x < 100)
+  {
+
+    for (int j = 0; j < NUM_SENSORS; j++)
+    {
+      // getting sesnsor readings
+      int val = analogRead(sensor_array[j]);
+      // set the max we found THIS time
+      if (whiteThreshold[j] - 50 < val)
+        whiteThreshold[j] = val + 50;
+    }
+    x++;
+    delay(10);
+  }
+  digitalWrite(Red, LOW);
+
 }

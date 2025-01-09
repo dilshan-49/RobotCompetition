@@ -10,13 +10,18 @@ extern int threshold[NUM_SENSORS];
 extern const bool white;
 extern const bool black;
 
+extern float Kp;
+extern float Ki;
+extern float Kd;
+
 void readSensorVals(bool);
 void calibrateBlack();
 void calibrateWhite();
-int getError();
-int detectJunc();
+int getError(bool);
+void movetoJunction(bool);
 bool areAllSame(bool);
 bool isHalfSame(bool);
+void PIDfollow(bool);
 extern int blackThreshold[NUM_SENSORS];
 extern int whiteThreshold[NUM_SENSORS];
 

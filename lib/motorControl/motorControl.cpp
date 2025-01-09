@@ -9,9 +9,9 @@ static int errorSum;
 static int errorDif;
 static int correction;
 
-float KpEn = 0.5;
+float KpEn = 0.05;
 float KiEn = 0;
-float KdEn = 0.02;
+float KdEn = 0.002;
 
 volatile int encL;
 volatile int encR;
@@ -75,19 +75,17 @@ void controlMotors(int leftSpeed, int rightSpeed)
 
 static void encoderPID(int caseNum)
 {
+
   error = encL - encR;
   errorSum += error;
   errorDif = error - lastError;
   lastError = error;
   correction = KpEn * error + KiEn * errorSum + KdEn * errorDif;
+  correction = constrain(correction, -baseSpeed, baseSpeed);
   int leftspeed;
   int rightspeed;
   switch (caseNum)
   {
-  case 0:
-    leftspeed = baseSpeed - correction;
-    rightspeed = baseSpeed + correction;
-    break;
 
   case 1:
     leftspeed = baseSpeed - correction;
@@ -99,8 +97,13 @@ static void encoderPID(int caseNum)
     rightspeed = baseSpeed + correction;
     break;
   case 3:
-      leftspeed = -(baseSpeed + correction);
-      rightspeed =-(baseSpeed - correction); 
+    leftspeed = -(baseSpeed - correction);
+    rightspeed = -(baseSpeed + 1.25*correction);
+    break;
+
+  default:
+    leftspeed = baseSpeed - correction;
+    rightspeed = baseSpeed + correction;
     break;
   }
 
@@ -108,6 +111,10 @@ static void encoderPID(int caseNum)
   Serial.print(error);
   Serial.print(" - ");
   Serial.println(correction);
+  Serial.print(rightspeed);
+  Serial.print(" | ");
+  Serial.println(leftspeed);
+  delay(100);
 }
 
 void stopMotors()
@@ -150,7 +157,7 @@ void turnLeft()
   stopMotors();
   delay(500);
 
-  while (encL < 150 && encR < 150)
+  while (encL < 130 && encR < 130)
   {
     encoderPID(2);
   }
@@ -176,7 +183,7 @@ void turnRight()
 
   stopMotors();
   delay(500);
-  while (encL < 150 && encR < 150)
+  while (encL < 130 && encR < 130)
   {
     encoderPID(1);
   }
@@ -200,7 +207,7 @@ void turnBack(bool side)
   encL = 0;
   encR = 0;
 
-  while (encL < 310 && encR < 310)
+  while (encL < 295 && encR < 295)
   {
     if (side)
       encoderPID(1); // turn from right
@@ -229,13 +236,6 @@ void reverse(int speed)
   digitalWrite(MOTOR_LEFT_BACKWARD, HIGH);
   analogWrite(LEFT_PWM, speed);
   analogWrite(RIGHT_PWM, speed);
-  readSensorVals(false);
-  while (areAllSame(false))
-  {
-    readSensorVals(false);
-    delay(50);
-  }
-  brake();
 }
 
 void rotate()
